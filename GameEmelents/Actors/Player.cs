@@ -8,8 +8,6 @@ using System.Diagnostics;
 
 internal class Player : Actor
 {
-	Texture2D _texture;
-
 	// Various
 	public Vector2 Velocity = new Vector2();
 	Countdown _countdown;
@@ -84,7 +82,6 @@ internal class Player : Actor
 		//Collider = new BoxCollider(Position, Size - _colliderSizeDif, "Player");
 
 		JumpHeight += _colliderSizeDiff.Y;
-		_texture = content.Load<Texture2D>("Square");
 		_countdown = SceneManager.CurrentScene.GetActor<Countdown>();
 
 		// Land and jump tweening
@@ -248,7 +245,7 @@ internal class Player : Actor
 	public override void Draw(SpriteBatch spriteBatch)
 	{
 		spriteBatch.Draw(
-			_texture, 
+			Main.Pixel, 
 			Collider.Position + Vector2.UnitY * (Size.Y / 2f - _colliderSizeDiff.Y / 2f),// - Vector2.UnitY * (_colliderSizeDif.Y / 2 + (Size.Y - Size.Y * _sizeMultiplier.Y) / -2), 
 			null, 
 			Color.Blue, 

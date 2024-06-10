@@ -8,6 +8,8 @@ public abstract class MenuElement
 {
 	public bool IsSelected { get; set; } = false;
 
+	public Vector2 Size { get; set; }
+
 	public MenuPivot Pivot { get; set; }
 	public Vector2 Offset { get; set; }
 	public Vector2 Position
@@ -31,8 +33,6 @@ public abstract class MenuElement
 			} + Main.WindowCenter + Offset;
 		}
 	}
-	
-	public Vector2 Size { get; set; }
 
 	public abstract void Start(ContentManager content);
 	public abstract void Update();

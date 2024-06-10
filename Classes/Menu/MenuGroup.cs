@@ -38,23 +38,30 @@ public class MenuGroup
 	}
 
 
-	public MenuElement Selected
+	public MenuElement SelectedElement 
 	{
-		get => _selectedLink.Element;
-		set => _selectedLink = _graph[value];
+		get => _graph[_selected].Element;
+		set => _selected = _graph[value].Element; 
 	}
-	MenuLink _selectedLink;
+
+
+	MenuElement _selected;
+	MenuLink SelectedLink
+	{
+		get => _graph[_selected];
+		set => _selected = _graph[value.Element].Element;
+	}
 	Dictionary<MenuElement, MenuLink> _graph;
 
 
 	// Construction
 	public MenuGroup(MenuElement root)
 	{
-		_selectedLink.Element = root;
-		_selectedLink.Element.IsSelected = true;
+		_selected = root;
+		_selected.IsSelected = true;
 		_graph = new()
 		{
-			[root] = _selectedLink
+			[root] = new MenuLink(root)
 		};
 	}
 
@@ -127,23 +134,23 @@ public class MenuGroup
 	// Input handling
 	void HandleInput()
 	{
-		MenuElement prev = _selectedLink.Element;
+		MenuElement prev = SelectedElement;
 
-		if (Menu.GetAnyRightKeyDown() && _selectedLink.RightElement != null)
-			_selectedLink.Element = _selectedLink.RightElement;
-		else if (Menu.GetAnyLeftKeyDown() && _selectedLink.LeftElement != null)
-			_selectedLink.Element = _selectedLink.LeftElement;
-		else if(Menu.GetAnyUpKeyDown() && _selectedLink.UpElement != null)
-			_selectedLink.Element = _selectedLink.UpElement;
-		else if(Menu.GetAnyDownKeyDown() && _selectedLink.DownElement != null)
-			_selectedLink.Element = _selectedLink.DownElement;
-		else if(Menu.GetAnyInteractKeyDown() && _selectedLink.InteractElement != null)
-			_selectedLink.Element = _selectedLink.InteractElement;
+		if (Menu.GetAnyRightKeyDown() && SelectedLink.RightElement != null)
+			SelectedElement = SelectedLink.RightElement;
+		else if (Menu.GetAnyLeftKeyDown() && SelectedLink.LeftElement != null)
+			SelectedElement = SelectedLink.LeftElement;
+		else if(Menu.GetAnyUpKeyDown() && SelectedLink.UpElement != null)
+			SelectedElement = SelectedLink.UpElement;
+		else if(Menu.GetAnyDownKeyDown() && SelectedLink.DownElement != null)
+			SelectedElement = SelectedLink.DownElement;
+		else if(Menu.GetAnyInteractKeyDown() && SelectedLink.InteractElement != null)
+			SelectedElement = SelectedLink.InteractElement;
 
-		if (_selectedLink.Element != prev)
+		if (SelectedElement != prev)
 		{
 			prev.IsSelected = false;
-			_selectedLink.Element.IsSelected = true;
+			SelectedElement.IsSelected = true;
 		}
 	}
 }

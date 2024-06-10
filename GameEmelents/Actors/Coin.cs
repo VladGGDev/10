@@ -6,8 +6,6 @@ using Microsoft.Xna.Framework.Content;
 
 internal class Coin : Actor
 {
-	Texture2D _texture;
-
 	public static int Coins = 0;
 
 	public float ColliderRadius = 100f;
@@ -19,8 +17,6 @@ internal class Coin : Actor
 
 	public override void Start(ContentManager content)
 	{
-		_texture = content.Load<Texture2D>("Square");
-
 		this.AddCollider(new CircleCollider(Position, Size.X / 2f, "Coin"));
 		//Collider = new CircleCollider(Position, Size.X / 2f, "Coin");
 		Coins++;
@@ -37,12 +33,13 @@ internal class Coin : Actor
 	public override void Draw(SpriteBatch spriteBatch)
 	{
 		spriteBatch.Draw(
-			_texture, 
+			Main.Pixel, 
 			Position + _offset, 
 			null, 
 			Color.Gold, 
 			MathF.PI * 0.25f, 
-			Pivot, Size, 
+			Pivot,
+			Size, 
 			SpriteEffects.None, 
 			0);
 		// Collider 
