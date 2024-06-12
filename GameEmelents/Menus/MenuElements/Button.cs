@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Tweening;
+using System;
 
 public class Button : MenuElement
 {
@@ -15,29 +16,27 @@ public class Button : MenuElement
 	public Color NormalColor;
 	public Color SelectedColor;
 	FloatTween _colorTween;
-	bool _wasSelected = false;
+
+	public Action OnInteract;
 
 	public override void Start(ContentManager content)
 	{
 		_font = content.Load<SpriteFont>("Fonts/Roboto-Light");
 
 		_colorTween = new FloatTween(0.15f);
+		OnSelected = () => _colorTween.SetStart(0).SetTarget(1).Restart();
+		OnDeselected = () => _colorTween.SetStart(1).SetTarget(0).Restart();
 	}
 
 	public override void Update()
 	{
-		if (!_wasSelected && IsSelected)
-			_colorTween.SetStart(0).SetTarget(1).Restart();
-		if (_wasSelected && !IsSelected)
-			_colorTween.SetStart(1).SetTarget(0).Restart();
-
-		_wasSelected = IsSelected;
+		if (IsSelected && Menu.GetAnyInteractKeyDown() && OnInteract != null)
+			OnInteract();
 	}
 
 	public override void Draw(SpriteBatch spriteBatch)
 	{
 		Vector2 textSize = _font.MeasureString(Text);
-		Vector2 textMiddle = textSize / 2f;
 
 		spriteBatch.DrawString(
 			_font, 
@@ -45,7 +44,7 @@ public class Button : MenuElement
 			Position, 
 			Color.Lerp(NormalColor, SelectedColor, 1 - _colorTween.Result()),
 			0,
-			textMiddle,
+			textSize * Pivot,
 			1f, 
 			SpriteEffects.None,
 			0.91f);
@@ -56,7 +55,7 @@ public class Button : MenuElement
 			null,
 			Color.Lerp(NormalColor, SelectedColor, _colorTween.Result()),
 			0,
-			Vector2.One / 2f,
+			Pivot,
 			textSize + Padding,
 			SpriteEffects.None,
 			0.1f);

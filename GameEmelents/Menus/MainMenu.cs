@@ -8,15 +8,16 @@ public class MainMenu : Menu
 		{
 			NormalColor = Color.Black,
 			SelectedColor = Color.White,
-			Text = "Button 1",
-			Padding = new Vector2(50f, 0)
+			Text = "Start",
+			Padding = new Vector2(50f, 0),
+			OnInteract = () => SceneManager.ChangeScene(SceneManager.CurrentSceneIndex + 1)
 		};
 		Button button2 = new()
 		{
 			NormalColor = Color.Black,
 			SelectedColor = Color.White,
 			Text = "Button 2",
-			Pivot = MenuPivot.Right,
+			ScreenPivot = MenuPivot.Right,
 			Padding = new Vector2(50f, 50f)
 		};
 		MenuGroup group = new(button1);

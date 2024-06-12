@@ -114,6 +114,7 @@ public class MenuGroup
 	{
 		foreach (var element in _graph.Keys)
 			element.Start(content);
+		_selected.OnSelected();
 	}
 
 	public void Update()
@@ -150,7 +151,9 @@ public class MenuGroup
 		if (SelectedElement != prev)
 		{
 			prev.IsSelected = false;
+			prev.OnDeselected();
 			SelectedElement.IsSelected = true;
+			SelectedElement.OnSelected();
 		}
 	}
 }
