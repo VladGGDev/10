@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using System;
-using System.Diagnostics;
+using System.Collections.Generic;
+using System.Linq;
 
 public static class Input
 {
@@ -8,19 +9,14 @@ public static class Input
 	static bool[] _prevMouseState = new bool[5];
 	static int _prevMouseScroll = 0;
 
+	static Dictionary<string, List<Keys>> _actions = new();
+
 	internal static void _UpdatePrevInput()
 	{
-		UpdatePrevKeyState();
-		UpdatePrevMouseState();
-	}
-
-	static void UpdatePrevKeyState()
-	{
+		// Prevoius key state
 		_prevKeyState = Keyboard.GetState();
-	}
 
-	static void UpdatePrevMouseState()
-	{
+		// Prevoius mouse state
 		_prevMouseState[0] = Mouse.GetState().LeftButton == ButtonState.Pressed;
 		_prevMouseState[1] = Mouse.GetState().RightButton == ButtonState.Pressed;
 		_prevMouseState[2] = Mouse.GetState().MiddleButton == ButtonState.Pressed;
@@ -39,6 +35,7 @@ public static class Input
 		4 => Mouse.GetState().XButton2 == ButtonState.Pressed,
 		_ => throw new ArgumentException("There are only 5 possible values")
 	};
+
 
 
 	public static float MouseScrollDelta
@@ -129,5 +126,58 @@ public static class Input
 	public static bool GetKey(Keys key)
 	{
 		return Keyboard.GetState().IsKeyDown(key);
+	}
+
+
+
+	public static void CreateAction(string name, params Keys[] keys)
+	{
+		_actions[name] = keys.ToList();
+	}
+
+	public static void AddKeyToAction(string name, Keys key)
+	{
+		if (!_actions.ContainsKey(name))
+			throw new ArgumentException("The input action named \"" + name + "\" does not exist.");
+		_actions[name].Add(key);
+	}
+
+	public static bool GetActionDown(string name)
+	{
+		if (!_actions.ContainsKey(name))
+			throw new ArgumentException("The input action named \"" + name + "\" does not exist.");
+
+		foreach (var key in _actions[name])
+		{
+			if (GetKeyDown(key))
+				return true;
+		}
+		return false;
+	}
+
+	public static bool GetAction(string name)
+	{
+		if (!_actions.ContainsKey(name))
+			throw new ArgumentException("The input action named \"" + name + "\" does not exist.");
+
+		foreach (var key in _actions[name])
+		{
+			if (GetKey(key))
+				return true;
+		}
+		return false;
+	}
+
+	public static bool GetActionUp(string name)
+	{
+		if (!_actions.ContainsKey(name))
+			throw new ArgumentException("The input action named \"" + name + "\" does not exist.");
+
+		foreach (var key in _actions[name])
+		{
+			if (GetKeyUp(key))
+				return true;
+		}
+		return false;
 	}
 }

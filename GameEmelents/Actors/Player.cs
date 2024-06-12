@@ -17,9 +17,6 @@ internal class Player : Actor
 
 	// Input
 	float _input = 0;
-	readonly Keys[] _jumpKeys = { Keys.Space, Keys.W, Keys.Up };
-	readonly Keys[] _moveLeftKeys = { Keys.A, Keys.Left };
-	readonly Keys[] _moveRightKeys = { Keys.D, Keys.Right };
 
 	// Speed
 	public float Acceleration = 40f;
@@ -110,19 +107,19 @@ internal class Player : Actor
 			return;
 
 		// Input
-		if (_input > 0 && GetAnyLeftKeyDown())
+		if (_input > 0 && Input.GetActionDown("Left"))
 			_input = -1f;
-		if (_input < 0 && GetAnyRightKeyDown())
+		if (_input < 0 && Input.GetActionDown("Right"))
 			_input = 1f;
 
-		if (_input == 0 && GetAnyLeftKey())
+		if (_input == 0 && Input.GetAction("Left"))
 			_input = -1;
-		if (_input == 0 && GetAnyRightKey())
+		if (_input == 0 && Input.GetAction("Right"))
 			_input = 1f;
 
-		if (_input < 0 && GetAnyLeftKeyUp())
+		if (_input < 0 && Input.GetActionUp("Left"))
 			_input = 0;
-		if (_input > 0 && GetAnyRightKeyUp())
+		if (_input > 0 && Input.GetActionUp("Right"))
 			_input = 0;
 
 
@@ -131,7 +128,7 @@ internal class Player : Actor
 		_coyoteTimer -= Main.DeltaTime;
 
 		// Jumping
-		if (GetAnyJumpKeyDown())
+		if (Input.GetActionDown("Jump"))
 			_bufferTimer = BufferTime;
 
 		if (_bufferTimer > 0 && (IsGrounded || _coyoteTimer > 0))
@@ -141,11 +138,11 @@ internal class Player : Actor
 			_coyoteTimer = 0;
 			_bufferTimer = 0;
 			_jumpTween.Restart();
-			if (!GetAnyJumpKey())
+			if (!Input.GetAction("Jump"))
 				Velocity.Y *= JumpCancelMultiplier;
 		}
 
-		if (GetAnyJumpKeyUp() && Velocity.Y < 0)
+		if (Input.GetActionUp("Jump") && Velocity.Y < 0)
 			Velocity.Y *= JumpCancelMultiplier;
 
 
@@ -327,75 +324,4 @@ internal class Player : Actor
 			}
 		}
 	}
-
-
-	#region Button Functions
-	public bool GetAnyJumpKey()
-	{
-		for (int i = 0; i < _jumpKeys.Length; i++)
-			if (Input.GetKey(_jumpKeys[i]))
-				return true;
-		return false;
-	}
-	public bool GetAnyJumpKeyUp()
-	{
-		for (int i = 0; i < _jumpKeys.Length; i++)
-			if (Input.GetKeyUp(_jumpKeys[i]))
-				return true;
-		return false;
-	}
-	public bool GetAnyJumpKeyDown()
-	{
-		for (int i = 0; i < _jumpKeys.Length; i++)
-			if (Input.GetKeyDown(_jumpKeys[i]))
-				return true;
-		return false;
-	}
-
-
-
-	public bool GetAnyLeftKey()
-	{
-		for (int i = 0; i < _moveLeftKeys.Length; i++)
-			if (Input.GetKey(_moveLeftKeys[i]))
-				return true;
-		return false;
-	}
-	public bool GetAnyLeftKeyDown()
-	{
-		for (int i = 0; i < _moveLeftKeys.Length; i++)
-			if (Input.GetKeyDown(_moveLeftKeys[i]))
-				return true;
-		return false;
-	}
-	public bool GetAnyLeftKeyUp()
-	{
-		for (int i = 0; i < _moveLeftKeys.Length; i++)
-			if (Input.GetKeyUp(_moveLeftKeys[i]))
-				return true;
-		return false;
-	}
-
-	public bool GetAnyRightKey()
-	{
-		for (int i = 0; i < _moveRightKeys.Length; i++)
-			if (Input.GetKey(_moveRightKeys[i]))
-				return true;
-		return false;
-	}
-	public bool GetAnyRightKeyDown()
-	{
-		for (int i = 0; i < _moveRightKeys.Length; i++)
-			if (Input.GetKeyDown(_moveRightKeys[i]))
-				return true;
-		return false;
-	}
-	public bool GetAnyRightKeyUp()
-	{
-		for (int i = 0; i < _moveRightKeys.Length; i++)
-			if (Input.GetKeyUp(_moveRightKeys[i]))
-				return true;
-		return false;
-	}
-	#endregion
 }

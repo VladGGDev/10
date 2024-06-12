@@ -46,6 +46,10 @@ public class Main : Game
 	// LDtk
 	//Vector2 _entityLayerOffset = new(0, 8);  // Don't forget about this
 
+
+	// Testing
+	Tween tween = new();
+
 	public Main()
 	{
 		_graphicsSettings = new GraphicsDeviceManager(this);
@@ -66,19 +70,18 @@ public class Main : Game
 		_spriteDraw = new SpriteBatch(GraphicsDevice);
 		_sceneManager = new(Content, _spriteDraw);
 
+		// Create the 1x1 square texture
 		Pixel = new Texture2D(GraphicsDevice, 1, 1);
 		Pixel.SetData(new[] { Color.White });
 
-		// ===== Settings =====
-		IsMouseVisible = true;
+		// Setup
+		IsMouseVisible = true;  // Set to false
 		IsFixedTimeStep = false;
 		//IsFixedTimeStep = true;
 		//TargetElapsedTime = new TimeSpan(0, 0, 0, 0, 1000 / 144);
 		//MaxElapsedTime = new TimeSpan(0, 0, 0, 0, 1000 / 60);
 		Window.AllowAltF4 = true;
 		Window.AllowUserResizing = true;
-
-		//Window.ClientBounds.Width;
 
 		// Fullscreen
 		//_graphicsSettings.IsFullScreen = true;  // reset to true when pixel perfect works
@@ -87,12 +90,25 @@ public class Main : Game
 		_graphicsSettings.ApplyChanges();
 
 
+		// Input actions
+		// Player
+		Input.CreateAction("Left", Keys.A, Keys.Left);
+		Input.CreateAction("Right", Keys.D, Keys.Right);
+		Input.CreateAction("Jump", Keys.Space, Keys.W, Keys.Up);
+		// Menu
+		Input.CreateAction("MenuUp", Keys.W, Keys.Up);
+		Input.CreateAction("MenuLeft", Keys.A, Keys.Left);
+		Input.CreateAction("MenuDown", Keys.S, Keys.Down);
+		Input.CreateAction("MenuRight", Keys.D, Keys.Right);
+		Input.CreateAction("MenuInteract", Keys.Space, Keys.Enter);
 
-		// ===== Scenes =====
+
+		// Scenes
 		_sceneManager.AddScene<MainMenuScene>(null);
 		foreach (var level in _sceneManager.WorldLevels)
 		{
 			_sceneManager.AddScene<GameScene>(level);
+			// In between each scene add a scene for the number of the level
 		}
 		SceneManager.ChangeScene(0);
 		_sceneManager._HandleQueuedScene();
@@ -106,7 +122,7 @@ public class Main : Game
 	{
 		_font = Content.Load<SpriteFont>("Fonts/Roboto-Light");
 	}
-	Tween tween = new();
+	
 	protected override void Update(GameTime gameTime)
 	{
 		if (Input.GetKeyDown(Keys.Escape))

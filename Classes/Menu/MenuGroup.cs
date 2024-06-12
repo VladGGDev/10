@@ -137,15 +137,15 @@ public class MenuGroup
 	{
 		MenuElement prev = SelectedElement;
 
-		if (Menu.GetAnyRightKeyDown() && SelectedLink.RightElement != null)
+		if (Input.GetActionDown("MenuRight") && SelectedLink.RightElement != null)
 			SelectedElement = SelectedLink.RightElement;
-		else if (Menu.GetAnyLeftKeyDown() && SelectedLink.LeftElement != null)
+		else if (Input.GetActionDown("MenuLeft") && SelectedLink.LeftElement != null)
 			SelectedElement = SelectedLink.LeftElement;
-		else if(Menu.GetAnyUpKeyDown() && SelectedLink.UpElement != null)
+		else if(Input.GetActionDown("MenuUp") && SelectedLink.UpElement != null)
 			SelectedElement = SelectedLink.UpElement;
-		else if(Menu.GetAnyDownKeyDown() && SelectedLink.DownElement != null)
+		else if(Input.GetActionDown("MenuDown") && SelectedLink.DownElement != null)
 			SelectedElement = SelectedLink.DownElement;
-		else if(Menu.GetAnyInteractKeyDown() && SelectedLink.InteractElement != null)
+		else if(Input.GetActionDown("MenuInteract") && SelectedLink.InteractElement != null)
 			SelectedElement = SelectedLink.InteractElement;
 
 		if (SelectedElement != prev)

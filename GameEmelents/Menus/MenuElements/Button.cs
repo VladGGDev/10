@@ -30,7 +30,7 @@ public class Button : MenuElement
 
 	public override void Update()
 	{
-		if (IsSelected && Menu.GetAnyInteractKeyDown() && OnInteract != null)
+		if (IsSelected && Input.GetActionDown("MenuInteract") && OnInteract != null)
 			OnInteract();
 	}
 
