@@ -33,8 +33,8 @@ public class Slider : MenuElement
 		_font = content.Load<SpriteFont>("Fonts/Roboto-Light");
 
 		_colorTween = new FloatTween(0.15f);
-		OnSelected = () => _colorTween.SetStart(0).SetTarget(1).Restart();
-		OnDeselected = () => _colorTween.SetStart(1).SetTarget(0).Restart();
+		OnSelected = () => _colorTween.SetStart(0).SetTarget(1).RestartAt(1 - _colorTween.EasedElapsedPercentage);
+		OnDeselected = () => _colorTween.SetStart(1).SetTarget(0).RestartAt(1 - _colorTween.EasedElapsedPercentage);
 	}
 
 	public override void Update()

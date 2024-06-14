@@ -117,6 +117,7 @@ public abstract class Scene
 		foreach (var actor in _queuedAddedActors)
 		{
 			_actors.Add(actor);
+			actor.Position += Main.EntityLayerOffset;
 		}
 		_queuedAddedActors.Clear();
 	}

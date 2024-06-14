@@ -8,6 +8,10 @@ using System.Diagnostics;
 
 internal class Player : Actor
 {
+	// UNIT SIZE: 32
+	// JUMP HEIGHT: 6 units
+	// JUMP DISTANCE: 16 units
+
 	// Various
 	public Vector2 Velocity = new Vector2();
 	Countdown _countdown;

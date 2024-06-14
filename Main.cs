@@ -41,10 +41,8 @@ public class Main : Game
 	public const int UnitSize = 32;
 	public const float TargetScreenHeight = 1080f;
 	public const float TargetAspectRatio = 16f / 9f;
+	public static readonly Vector2 EntityLayerOffset = new(8, 8);  // Don't forget about this
 
-
-	// LDtk
-	//Vector2 _entityLayerOffset = new(0, 8);  // Don't forget about this
 
 
 	// Testing
