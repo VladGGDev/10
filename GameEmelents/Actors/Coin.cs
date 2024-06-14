@@ -24,7 +24,6 @@ internal class Coin : Actor
 
 	public override void Update()
 	{
-		Main.DebugMessage = Coins.ToString();
 		_offset.Y = MathF.Sin((Main.TotalTime + Position.X * PositionInfluence) * Frequency) * Magnitude;
 		//_offset.X = MathF.Sin((Main.TotalTime + 10f) * Frequency * 0.7123f) * Magnitude;
 		Collider.Position = Position + _offset;

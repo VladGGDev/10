@@ -150,7 +150,7 @@ public class Main : Game
 		if (Input.GetMouseButton(0))
 			SceneManager.ChangeScene(0);
 		if (Input.GetMouseButton(1))
-			SceneManager.ChangeScene(1);
+			SceneManager.ChangeScene(2);
 		if (Input.GetKeyDown(Keys.Space))
 			tween.Restart();
 		if (Input.GetKeyDown(Keys.C))

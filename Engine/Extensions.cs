@@ -36,3 +36,22 @@ public static class SpriteBatchExtensions
 		spriteBatch.Draw(Main.Pixel, new Rectangle(position.X - halfSize.X, position.Y - halfSize.Y, 1, size.Y), color);
 	}
 }
+
+
+public static class LerpExtensions
+{
+	public static float Lerp(float a, float b, float t)
+	{
+		return a + (b - a) * t;
+	}
+
+	public static float InverseLerp(float a, float b, float val)
+	{
+		return (val - a) / (b - a);
+	}
+
+	public static float Remap(float aIn, float bIn, float aOut, float bOut, float val)
+	{
+		return Lerp(aOut, bOut, InverseLerp(aIn, bIn, val));
+	}
+}

@@ -1,23 +1,24 @@
-﻿using Menus;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Tweening;
 using System;
 
+namespace Menus;
+
 public class Button : MenuElement
 {
 	SpriteFont _font;
-	public string Text;
+	public string Text { get; set; } = "";
 
-	public Vector2 Padding;
+	public Vector2 Padding { get; set; } = Vector2.Zero;
 
-	public Color NormalColor;
-	public Color SelectedColor;
+	public Color NormalColor { get; set; } = Color.Black;
+	public Color SelectedColor { get; set; } = Color.White;
 	FloatTween _colorTween;
 
-	public Action OnInteract;
+	public Action OnInteract { get; set; }
 
 	public override void Start(ContentManager content)
 	{
@@ -45,7 +46,7 @@ public class Button : MenuElement
 			Color.Lerp(NormalColor, SelectedColor, 1 - _colorTween.Result()),
 			0,
 			textSize * Pivot,
-			1f, 
+			Size, 
 			SpriteEffects.None,
 			0.91f);
 
@@ -56,8 +57,8 @@ public class Button : MenuElement
 			Color.Lerp(NormalColor, SelectedColor, _colorTween.Result()),
 			0,
 			Pivot,
-			textSize + Padding,
+			textSize * Size + Padding,
 			SpriteEffects.None,
-			0.1f);
+			0.9f);
 	}
 }

@@ -11,10 +11,10 @@ public abstract class MenuElement
 	public Action OnSelected = () => { };
 	public Action OnDeselected = () => { };
 
-	public Vector2 Size { get; set; }
+	public Vector2 Size { get; set; } = Vector2.One;
 
-	public MenuPivot ScreenPivot { get; set; }
-	public Vector2 Offset { get; set; }
+	public MenuPivot ScreenPivot { get; set; } = MenuPivot.Center;
+	public Vector2 Offset { get; set; } = Vector2.Zero;
 	public Vector2 Position
 	{
 		get
