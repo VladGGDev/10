@@ -32,7 +32,7 @@ public class Image : MenuElement
 			Texture.Bounds.Size.ToVector2() * Pivot,
 			Size,
 			SpriteEffects.None,
-			0.91f);
+			LayerDepth);
 
 		spriteBatch.Draw(
 			Main.Pixel,
@@ -43,6 +43,6 @@ public class Image : MenuElement
 			Pivot,
 			Texture.Bounds.Size.ToVector2() * Size + Padding,
 			SpriteEffects.None,
-			0.9f);
+			LayerDepth - 0.1f);
 	}
 }

@@ -10,7 +10,11 @@ namespace Menus.MenuElements;
 public class Slider : MenuElement
 {
 	public Texture2D Texture { get; set; }
-	public Vector2 TextureSize { get; set; } = Vector2.One;
+	public Vector2 TextureSize 
+	{ 
+		get => Size; 
+		set => Size = value; 
+	}
 
 	public Vector2 Padding { get; set; } = Vector2.Zero;
 	public Vector2 SliderSize { get; set; } = new(300f, 15f);
@@ -69,7 +73,7 @@ public class Slider : MenuElement
 			Texture.Bounds.Size.ToVector2() * Pivot,
 			TextureSize,
 			SpriteEffects.None,
-			0.91f);
+			LayerDepth);
 
 		// Slider
 		spriteBatch.Draw(
@@ -81,7 +85,7 @@ public class Slider : MenuElement
 			Pivot,
 			SliderSize,
 			SpriteEffects.None,
-			0.91f);
+			LayerDepth);
 
 		// Slider handle
 		spriteBatch.Draw(
@@ -93,7 +97,7 @@ public class Slider : MenuElement
 			Pivot,
 			SliderHandleSize,
 			SpriteEffects.None,
-			0.91f);
+			LayerDepth);
 
 		// Value
 		Vector2 valueTextPosition = Position + Gap * Vector2.UnitX + SliderSize.X * Vector2.UnitX / 2f + Vector2.UnitX * valueTextSize.X / 2f;
@@ -106,7 +110,7 @@ public class Slider : MenuElement
 			valueTextSize * Pivot,
 			1f,
 			SpriteEffects.None,
-			0.91f);
+			LayerDepth);
 
 		// Background
 		spriteBatch.Draw(
@@ -118,6 +122,14 @@ public class Slider : MenuElement
 			Pivot,
 			(Texture.Bounds.Size.ToVector2() * TextureSize) + Padding + Vector2.UnitX * (Gap * 2f + SliderSize.X + valueTextSize.X),
 			SpriteEffects.None,
-			0.9f);
+			LayerDepth - 0.1f);
+	}
+
+
+	public Vector2 GetSliderDimensions()
+	{
+		string valueText = MathF.Round(Value, Decimals).ToString($"F{Decimals}");
+		Vector2 valueTextSize = Font.MeasureString(valueText);
+		return Texture.Bounds.Size.ToVector2() * TextureSize + Padding + Vector2.UnitX * (Gap * 2f + SliderSize.X + valueTextSize.X);
 	}
 }

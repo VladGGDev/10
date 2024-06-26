@@ -103,7 +103,6 @@ public class Main : Game
 		_sceneManager._HandleQueuedScene();
 
 
-
 		base.Initialize();
 	}
 

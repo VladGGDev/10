@@ -35,7 +35,7 @@ public class Text : MenuElement
 			textSize / 2f,
 			1f * Size,
 			SpriteEffects.None,
-			0.91f);
+			LayerDepth);
 
 		spriteBatch.Draw(
 			Main.Pixel,
@@ -46,6 +46,6 @@ public class Text : MenuElement
 			Pivot,
 			textSize * Size + Padding,
 			SpriteEffects.None,
-			0.9f);
+			LayerDepth - 0.1f);
 	}
 }

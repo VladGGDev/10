@@ -8,10 +8,16 @@ namespace Menus;
 public abstract class MenuElement
 {
 	public bool IsSelected { get; set; } = false;
-	public Action OnSelected = () => { };
-	public Action OnDeselected = () => { };
+	public Action OnSelected { get; set; } = () => { };
+	public Action OnDeselected { get; set; } = () => { };
 
 	public Vector2 Size { get; set; } = Vector2.One;
+	float _layerDepth = 0.91f;
+	public float LayerDepth 
+	{ 
+		get => _layerDepth; 
+		set => _layerDepth = MathHelper.Clamp(value, 0, 1f); 
+	}
 
 	public MenuPivot ScreenPivot { get; set; } = MenuPivot.Center;
 	public Vector2 Offset { get; set; } = Vector2.Zero;
