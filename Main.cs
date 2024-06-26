@@ -13,6 +13,8 @@ public class Main : Game
 	SpriteBatch _spriteDraw;
 	SceneManager _sceneManager;
 
+	public static Main Instance { get; private set; }
+
 	// 1x1 pixel texture
 	public static Texture2D Pixel;
 
@@ -44,23 +46,11 @@ public class Main : Game
 	public static readonly Vector2 EntityLayerOffset = new(8, 8);  // Don't forget about this
 
 
-
-	// Testing
-	Tween tween = new();
-
 	public Main()
 	{
+		Instance = this;
 		_graphicsSettings = new GraphicsDeviceManager(this);
 		Content.RootDirectory = "Content";
-
-
-		tween.SetStart(new(-250, 500))
-			.SetTarget(new(500, 500))
-			.SetDuration(1f)
-			.SetEasing(EasingFunctions.EaseOutBounce);
-		//tween.Add(new Tween(new(-250, 500), new(500, 500), 1f))//.SetEasing(EasingFunctions.EaseOutCubic))
-		//	.AddDelay(0.5f)
-		//	.Add(new Tween(new(-250, 700), new(500, 700), 1f));
 	}
 
 	protected override void Initialize()
@@ -106,8 +96,9 @@ public class Main : Game
 		foreach (var level in _sceneManager.WorldLevels)
 		{
 			_sceneManager.AddScene<GameScene>(level);
-			// In between each scene add a scene for the number of the level
+			// TODO: In between each scene add a scene for the number of the level
 		}
+
 		SceneManager.ChangeScene(0);
 		_sceneManager._HandleQueuedScene();
 
@@ -149,13 +140,9 @@ public class Main : Game
 			SceneManager.ChangeScene(0);
 		if (Input.GetMouseButton(1))
 			SceneManager.ChangeScene(2);
-		if (Input.GetKeyDown(Keys.Space))
-			tween.Restart();
-		if (Input.GetKeyDown(Keys.C))
-			tween.RestartAt(0.5f);
-
 
 		_sceneManager._HandleQueuedScene();
+
 		// Input (has to happen last)
 		Input._UpdatePrevInput();
 
@@ -220,10 +207,6 @@ public class Main : Game
 		//		(int)(WindowCenter.X - WindowSize.X / 2), (int)(WindowCenter.Y + WindowSize.Y / 2),
 		//		(int)(WindowSize.X + 1), int.MaxValue),
 		//	Color.Black);
-
-
-		// Tween test
-		_spriteDraw.Draw(Pixel, tween.Result(), null, Color.Beige, 0, Vector2.Zero, 50f, SpriteEffects.None, 1f);
 
 		_spriteDraw.End();
 

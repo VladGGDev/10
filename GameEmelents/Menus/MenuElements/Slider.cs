@@ -9,8 +9,8 @@ namespace Menus.MenuElements;
 
 public class Slider : MenuElement
 {
-	SpriteFont _font;
-	public string Text { get; set; } = "";
+	public Texture2D Texture { get; set; }
+	public Vector2 TextureSize { get; set; } = Vector2.One;
 
 	public Vector2 Padding { get; set; } = Vector2.Zero;
 	public Vector2 SliderSize { get; set; } = new(300f, 15f);
@@ -21,6 +21,7 @@ public class Slider : MenuElement
 	public Color SelectedColor { get; set; } = Color.White;
 	FloatTween _colorTween;
 
+	public SpriteFont Font { get; set; }
 	public Action<float> OnValueChanged { get; set; }
 	public float Value { get; set; } = 0;
 	public float Min { get; set; } = 0;
@@ -30,8 +31,6 @@ public class Slider : MenuElement
 
 	public override void Start(ContentManager content)
 	{
-		_font = content.Load<SpriteFont>("Fonts/Roboto-Light");
-
 		_colorTween = new FloatTween(0.15f);
 		OnSelected = () => _colorTween.SetStart(0).SetTarget(1).RestartAt(1 - _colorTween.EasedElapsedPercentage);
 		OnDeselected = () => _colorTween.SetStart(1).SetTarget(0).RestartAt(1 - _colorTween.EasedElapsedPercentage);
@@ -56,20 +55,19 @@ public class Slider : MenuElement
 
 	public override void Draw(SpriteBatch spriteBatch)
 	{
-		Vector2 textSize = _font.MeasureString(Text);
 		string valueText = MathF.Round(Value, Decimals).ToString($"F{Decimals}");
-		Vector2 valueTextSize = _font.MeasureString(valueText);
+		Vector2 valueTextSize = Font.MeasureString(valueText);
 
-		// Text
-		Vector2 textPosition = Position - Gap * Vector2.UnitX - SliderSize.X * Vector2.UnitX / 2f - Vector2.UnitX * textSize.X / 2f;
-		spriteBatch.DrawString(
-			_font,
-			Text,
-			textPosition,
+		// Texture
+		Vector2 texturePosition = Position - Vector2.UnitX * (Gap + SliderSize.X  / 2f + Texture.Width * TextureSize.X / 2f);
+		spriteBatch.Draw(
+			Texture,
+			texturePosition,
+			null,
 			Color.Lerp(NormalColor, SelectedColor, 1 - _colorTween.Result()),
 			0,
-			textSize * Pivot,
-			1f,
+			Texture.Bounds.Size.ToVector2() * Pivot,
+			TextureSize,
 			SpriteEffects.None,
 			0.91f);
 
@@ -100,7 +98,7 @@ public class Slider : MenuElement
 		// Value
 		Vector2 valueTextPosition = Position + Gap * Vector2.UnitX + SliderSize.X * Vector2.UnitX / 2f + Vector2.UnitX * valueTextSize.X / 2f;
 		spriteBatch.DrawString(
-			_font,
+			Font,
 			valueText,
 			valueTextPosition,
 			Color.Lerp(NormalColor, SelectedColor, 1 - _colorTween.Result()),
@@ -113,12 +111,12 @@ public class Slider : MenuElement
 		// Background
 		spriteBatch.Draw(
 			Main.Pixel,
-			(textPosition - Vector2.UnitX * textSize.X / 2f + valueTextPosition + Vector2.UnitX * valueTextSize.X / 2f) / 2f,
+			(texturePosition + valueTextPosition + Vector2.UnitX * (-(Texture.Width * TextureSize.X) / 2f + valueTextSize.X / 2f)) / 2f,
 			null,
 			Color.Lerp(NormalColor, SelectedColor, _colorTween.Result()),
 			0,
 			Pivot,
-			textSize + Padding + Vector2.UnitX * Gap * 2f + Vector2.UnitX * SliderSize.X + Vector2.UnitX * valueTextSize.X,
+			(Texture.Bounds.Size.ToVector2() * TextureSize) + Padding + Vector2.UnitX * (Gap * 2f + SliderSize.X + valueTextSize.X),
 			SpriteEffects.None,
 			0.9f);
 	}

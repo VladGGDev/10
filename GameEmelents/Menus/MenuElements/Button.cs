@@ -5,12 +5,11 @@ using Microsoft.Xna.Framework.Graphics;
 using Tweening;
 using System;
 
-namespace Menus;
+namespace Menus.MenuElements;
 
 public class Button : MenuElement
 {
-	SpriteFont _font;
-	public string Text { get; set; } = "";
+	public Texture2D Texture { get; set; }
 
 	public Vector2 Padding { get; set; } = Vector2.Zero;
 
@@ -22,8 +21,6 @@ public class Button : MenuElement
 
 	public override void Start(ContentManager content)
 	{
-		_font = content.Load<SpriteFont>("Fonts/Roboto-Light");
-
 		_colorTween = new FloatTween(0.15f);
 		OnSelected = () => _colorTween.SetStart(0).SetTarget(1).RestartAt(1 - _colorTween.EasedElapsedPercentage);
 		OnDeselected = () => _colorTween.SetStart(1).SetTarget(0).RestartAt(1 - _colorTween.EasedElapsedPercentage);
@@ -37,15 +34,13 @@ public class Button : MenuElement
 
 	public override void Draw(SpriteBatch spriteBatch)
 	{
-		Vector2 textSize = _font.MeasureString(Text);
-
-		spriteBatch.DrawString(
-			_font, 
-			Text,
-			Position, 
+		spriteBatch.Draw(
+			Texture,
+			Position,
+			null,
 			Color.Lerp(NormalColor, SelectedColor, 1 - _colorTween.Result()),
 			0,
-			textSize * Pivot,
+			Texture.Bounds.Size.ToVector2() * Pivot,
 			Size, 
 			SpriteEffects.None,
 			0.91f);
@@ -57,7 +52,7 @@ public class Button : MenuElement
 			Color.Lerp(NormalColor, SelectedColor, _colorTween.Result()),
 			0,
 			Pivot,
-			textSize * Size + Padding,
+			Texture.Bounds.Size.ToVector2() * Size + Padding,
 			SpriteEffects.None,
 			0.9f);
 	}

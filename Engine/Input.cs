@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,6 +38,8 @@ public static class Input
 	};
 
 
+
+	public static Vector2 MousePosition => Mouse.GetState().Position.ToVector2();
 
 	public static float MouseScrollDelta
 	{

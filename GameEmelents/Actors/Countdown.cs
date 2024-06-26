@@ -12,7 +12,7 @@ public class Countdown : Actor
 	SpriteFont _font;
 	Player _player;
 
-	float _timer = 10f;
+	public float Timer = 10f;
 	bool _started = false;
 	bool _won = false;
 	bool _lost = false;
@@ -34,22 +34,23 @@ public class Countdown : Actor
 			else
 				return;
 		}
-		_timer -= Main.DeltaTime;
-		if (_timer <= 0 && !_lost)
+		Timer -= Main.DeltaTime;
+		if (Timer <= 0 && !_lost)
 			Lose();
 	}
 
 	public override void Draw(SpriteBatch spriteBatch)
 	{
-		string text = Math.Clamp(_timer, 0, 10f).ToString("#0");
+		string text = MathF.Round(Math.Clamp(Timer, 0, 10f)).ToString();
 		spriteBatch.DrawString(_font,
 			text,
-			new(500, 500), Color.WhiteSmoke,
+			Main.WindowCenter,
+			Color.WhiteSmoke,
 			0f,
 			_font.MeasureString(text) / 2,
-			1f,
+			1.5f,
 			SpriteEffects.None,
-			0.3f);
+			0.0f);
 	}
 
 
@@ -59,10 +60,10 @@ public class Countdown : Actor
 			return;
 		_lost = true;
 		CanPlayerSimulate = false;
-		new Timeout(250f, () =>
+		_ = new Timeout(250f, () =>
 		{
 			SceneManager.CurrentScene.RemoveActor(_player);
-			new Timeout(500f, () =>
+			_ = new Timeout(250f, () =>
 			{
 				SceneManager.ChangeScene(SceneManager.CurrentSceneIndex);
 			});
@@ -74,7 +75,7 @@ public class Countdown : Actor
 		_won = true;
 		CanPlayerMove = false;
 		CanPlayerSimulate = false;
-		new Timeout(1000f, () =>
+		_ = new Timeout(1000f, () =>
 		{
 			SceneManager.ChangeScene(SceneManager.CurrentSceneIndex + 1);
 		});

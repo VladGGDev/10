@@ -28,4 +28,9 @@ public class CircleCollider : Collider
 		}
 		return false;
 	}
+
+	public override Vector2 ClosestPointOnBounds(Vector2 position)
+	{
+		return Position + Vector2.Normalize(GetRelativePosition(position)) * Radius;
+	}
 }

@@ -44,4 +44,9 @@ public class BoxCollider : Collider
 		}
 		return false;
 	}
+
+	public override Vector2 ClosestPointOnBounds(Vector2 position)
+	{
+		return Position + Vector2.Clamp(GetRelativePosition(position), -HalfSize, HalfSize);
+	}
 }

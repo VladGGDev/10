@@ -7,7 +7,7 @@ public class MainMenuScene : Scene
 {
 	MainMenu _mainMenu;
 
-	public MainMenuScene(LDtkLevel level) : base(level)
+	public MainMenuScene() : base(null)
 	{
 		_mainMenu = new();
 	}

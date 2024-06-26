@@ -35,6 +35,20 @@ public static class SpriteBatchExtensions
 		// Left
 		spriteBatch.Draw(Main.Pixel, new Rectangle(position.X - halfSize.X, position.Y - halfSize.Y, 1, size.Y), color);
 	}
+
+	public static void DrawSimlple(this SpriteBatch spriteBatch, Texture2D texture, Vector2 position, float rotation, Vector2 Size, Color color, float depth)
+	{
+		spriteBatch.Draw(
+			texture,
+			position,
+			null,
+			color,
+			rotation,
+			texture.Bounds.Center.ToVector2(),
+			Size,
+			SpriteEffects.None,
+			depth);
+	}
 }
 
 

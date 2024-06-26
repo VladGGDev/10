@@ -443,7 +443,7 @@
 					"max": null,
 					"regex": null,
 					"acceptFileTypes": null,
-					"defaultOverride": { "id": "V_Float", "params": [100] },
+					"defaultOverride": { "id": "V_Float", "params": [250] },
 					"textLanguageMode": null,
 					"symmetricalRef": false,
 					"autoChainRef": true,
@@ -480,7 +480,7 @@
 					"max": null,
 					"regex": null,
 					"acceptFileTypes": null,
-					"defaultOverride": { "id": "V_Float", "params": [0.75] },
+					"defaultOverride": { "id": "V_Float", "params": [0.5] },
 					"textLanguageMode": null,
 					"symmetricalRef": false,
 					"autoChainRef": true,
@@ -1934,41 +1934,6 @@
 						},
 						{
 							"__identifier": "Saw",
-							"__grid": [8,31],
-							"__pivot": [0.5,0.5],
-							"__tags": [],
-							"__tile": { "tilesetUid": 5, "x": 0, "y": 0, "w": 256, "h": 256 },
-							"__smartColor": "#E43B44",
-							"iid": "b8dc6f70-25d0-11ef-b964-ad7517d386d5",
-							"width": 128,
-							"height": 128,
-							"defUid": 8,
-							"px": [136,504],
-							"fieldInstances": [
-								{ "__identifier": "IsEased", "__type": "Bool", "__value": false, "__tile": null, "defUid": 51, "realEditorValues": [] },
-								{ "__identifier": "IsYoYo", "__type": "Bool", "__value": false, "__tile": null, "defUid": 10, "realEditorValues": [{
-									"id": "V_Bool",
-									"params": [ false ]
-								}] },
-								{ "__identifier": "Speed", "__type": "Array<Float>", "__value": [100,200,50,100], "__tile": null, "defUid": 13, "realEditorValues": [ null, { "id": "V_Float", "params": [200] }, { "id": "V_Float", "params": [50] }, { "id": "V_Float", "params": [100] } ] },
-								{ "__identifier": "WaitTime", "__type": "Array<Float>", "__value": [0.75,2,0.75,0], "__tile": null, "defUid": 11, "realEditorValues": [ null, { "id": "V_Float", "params": [2] }, null, { "id": "V_Float", "params": [0] } ] },
-								{ "__identifier": "Points", "__type": "Array<Point>", "__value": [ { "cx": 30, "cy": 31 }, { "cx": 30, "cy": 15 }, { "cx": 8, "cy": 15 }, { "cx": 8, "cy": 31 } ], "__tile": null, "defUid": 9, "realEditorValues": [ {
-									"id": "V_String",
-									"params": ["30,31"]
-								}, {
-									"id": "V_String",
-									"params": ["30,15"]
-								}, {
-									"id": "V_String",
-									"params": ["8,15"]
-								}, {
-									"id": "V_String",
-									"params": ["8,31"]
-								} ] }
-							]
-						},
-						{
-							"__identifier": "Saw",
 							"__grid": [61,40],
 							"__pivot": [0.5,0.5],
 							"__tags": [],
@@ -1980,14 +1945,20 @@
 							"defUid": 8,
 							"px": [984,648],
 							"fieldInstances": [
-								{ "__identifier": "IsEased", "__type": "Bool", "__value": false, "__tile": null, "defUid": 51, "realEditorValues": [] },
+								{ "__identifier": "IsEased", "__type": "Bool", "__value": true, "__tile": null, "defUid": 51, "realEditorValues": [{
+									"id": "V_Bool",
+									"params": [ true ]
+								}] },
 								{ "__identifier": "IsYoYo", "__type": "Bool", "__value": true, "__tile": null, "defUid": 10, "realEditorValues": [] },
-								{ "__identifier": "Speed", "__type": "Array<Float>", "__value": [100], "__tile": null, "defUid": 13, "realEditorValues": [null] },
-								{ "__identifier": "WaitTime", "__type": "Array<Float>", "__value": [0.75], "__tile": null, "defUid": 11, "realEditorValues": [null] },
-								{ "__identifier": "Points", "__type": "Array<Point>", "__value": [{ "cx": 61, "cy": 17 }], "__tile": null, "defUid": 9, "realEditorValues": [{
+								{ "__identifier": "Speed", "__type": "Array<Float>", "__value": [250], "__tile": null, "defUid": 13, "realEditorValues": [null] },
+								{ "__identifier": "WaitTime", "__type": "Array<Float>", "__value": [0.5], "__tile": null, "defUid": 11, "realEditorValues": [null] },
+								{ "__identifier": "Points", "__type": "Array<Point>", "__value": [ { "cx": 61, "cy": 17 }, { "cx": 78, "cy": 17 } ], "__tile": null, "defUid": 9, "realEditorValues": [ {
 									"id": "V_String",
 									"params": ["61,17"]
-								}] }
+								}, {
+									"id": "V_String",
+									"params": ["78,17"]
+								} ] }
 							]
 						}
 					]

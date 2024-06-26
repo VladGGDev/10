@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 public abstract class Collider
 {
@@ -27,4 +26,5 @@ public abstract class Collider
 	public Vector2 GetRelativePosition(Vector2 other) => other - Position;
 	public Vector2 GetRelativePosition(Collider other) => other.Position - Position;
 	public abstract bool Check(Collider other);
+	public abstract Vector2 ClosestPointOnBounds(Vector2 position);
 }

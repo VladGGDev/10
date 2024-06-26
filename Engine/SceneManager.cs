@@ -29,7 +29,7 @@ public class SceneManager
 	struct SceneData
 	{
 		public Type SceneType;
-		public LDtkLevel Level;
+		public object[] ConstructorParams;
 	}
 	List<SceneData> _sceneData;
 
@@ -49,9 +49,9 @@ public class SceneManager
 		}
 	}
 
-	public void AddScene<SceneT>(LDtkLevel level) where SceneT : Scene
+	public void AddScene<SceneT>(params object[] constructorParams) where SceneT : Scene
 	{
-		_sceneData.Add(new() { SceneType = typeof(SceneT), Level = level });
+		_sceneData.Add(new() { SceneType = typeof(SceneT), ConstructorParams = constructorParams });
 	}
 
 
@@ -66,7 +66,7 @@ public class SceneManager
 			return;
 		CurrentScene?.End();
 		CurrentSceneIndex = _queuedSceneIndex;
-		CurrentScene = Activator.CreateInstance(_sceneData[_queuedSceneIndex].SceneType, _sceneData[_queuedSceneIndex].Level) as Scene;
+		CurrentScene = Activator.CreateInstance(_sceneData[_queuedSceneIndex].SceneType, _sceneData[_queuedSceneIndex].ConstructorParams) as Scene;
 		CurrentScene.Start(_content);
 		_queuedSceneIndex = -1;
 	}
