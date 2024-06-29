@@ -57,6 +57,24 @@ internal class Player : Actor
 	bool _wasGrounded = false;
 
 
+	// Corner correction
+	public struct CornerCorrection
+	{
+		public float StepDistance;
+		public int Iterations;
+
+		public CornerCorrection(float stepDistance, int iterations)
+		{
+			StepDistance = stepDistance;
+			Iterations = iterations;
+		}
+	}
+	public CornerCorrection UpCC = new(1f, 24);
+	public CornerCorrection ForwardCC = new(1f, 16);
+	public float MinCCYVel = -1.5f;
+	public float MaxCCYVel = 99f;
+
+
 	// Camera
 	public float CameraDamping = 0.025f;
 
@@ -309,6 +327,8 @@ internal class Player : Actor
 				switch (axis)
 				{
 					case CollisionAxis.Vertical:
+						if (UpCornerCorrect())
+							break;
 						while (Collider.Check(col))
 							Collider.Position -= Vector2.UnitY * Gravity * Main.FixedDeltaTime * Main.FixedDeltaTime * Math.Sign(Velocity.Y);
 
@@ -319,13 +339,80 @@ internal class Player : Actor
 
 
 					case CollisionAxis.Horizontal:
+						if (ForwardCornerCorrect())
+							break;
 						while (Collider.Check(col))
 							Collider.Position -= Vector2.UnitX * 0.1f * Math.Sign(Velocity.X);
 						Velocity.X = 0;
 						break;
-				}				
+				}	
 				break;
 			}
 		}
+	}
+
+
+	bool UpCornerCorrect()
+	{
+		// If colliding and moving up
+		if (TouchingAnything() && Velocity.Y < 0)
+		{
+			// Remember initial position
+			Vector2 prevPos = Collider.Position;
+
+			// For moving left
+			if (Velocity.X <= 0)
+			{
+				for (int i = 0; i < UpCC.Iterations; i++)
+				{
+					Collider.Position -= new Vector2(UpCC.StepDistance, 0);
+					if (!TouchingAnything())
+						return true;
+				}
+			}
+			Collider.Position = prevPos;
+
+			// For moving right
+			if (Velocity.X >= 0)
+			{
+				for (int i = 0; i < UpCC.Iterations; i++)
+				{
+					Collider.Position += new Vector2(UpCC.StepDistance, 0);
+					if (!TouchingAnything())
+						return true;
+				}
+			}
+			Collider.Position = prevPos;
+		}
+		return false;
+	}
+
+	bool ForwardCornerCorrect()
+	{
+		if (TouchingAnything() && Velocity.Y >= MinCCYVel && Velocity.Y <= MaxCCYVel && Velocity.X != 0)
+		{
+			Vector2 prevPos = Collider.Position;
+			for (int i = 0; i < ForwardCC.Iterations; i++)
+			{
+				Collider.Position -= new Vector2(0, ForwardCC.StepDistance);
+				if (!TouchingAnything())
+				{
+					Velocity.Y = 0;
+					return true;
+				}
+			}
+			Collider.Position = prevPos;
+		}
+		return false;
+	}
+
+	bool TouchingAnything()
+	{
+		foreach (Collider col in Collider.Colliders)
+		{
+			if (col.Tag != "Player" && Collider.Check(col))
+				return true;
+		}
+		return false;
 	}
 }

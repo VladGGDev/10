@@ -17,6 +17,7 @@ public class Countdown : Actor
 	bool _won = false;
 	bool _lost = false;
 
+
 	public override void Start(ContentManager content)
 	{
 		_font = content.Load<SpriteFont>("Fonts/Roboto-Light");

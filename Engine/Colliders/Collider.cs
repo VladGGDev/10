@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public abstract class Collider
 {
-	public static List<Collider> Colliders = new List<Collider>();
+	public static List<Collider> Colliders { get; set; } = new List<Collider>();
 	public string Tag { get; set; }
 	public Actor Actor { get; set; }
 	public Vector2 Position { get; set; }
