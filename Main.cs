@@ -22,7 +22,8 @@ public class Main : Game
 	public static string DebugMessage = "";
 	SpriteFont _font;
 
-	// UI screen data
+	// Screen data
+	RenderTarget2D _renderTarget;
 	public static Vector2 WindowCenter { get; private set; }
 	public static Vector2 WindowSize { get; private set; }
 
@@ -41,7 +42,7 @@ public class Main : Game
 
 	// Constants
 	public const int UnitSize = 32;
-	public const float TargetScreenHeight = 1080f;
+	public const float TargetScreenHeight = 1080;
 	public const float TargetAspectRatio = 16f / 9f;
 	public static readonly Vector2 EntityLayerOffset = new(8, 8);  // Don't forget about this
 
@@ -57,6 +58,7 @@ public class Main : Game
 	{
 		_spriteDraw = new SpriteBatch(GraphicsDevice);
 		_sceneManager = new(Content, _spriteDraw);
+		_renderTarget = new(GraphicsDevice, (int)(TargetScreenHeight * TargetAspectRatio), (int)TargetScreenHeight);
 
 		// Create the 1x1 square texture
 		Pixel = new Texture2D(GraphicsDevice, 1, 1);
@@ -95,7 +97,7 @@ public class Main : Game
 		_sceneManager.AddScene<MainMenuScene>(null);
 		foreach (var level in _sceneManager.WorldLevels)
 		{
-			_sceneManager.AddScene<GameScene>(level);
+			_sceneManager.AddScene<GameScene>(level,10f);
 			// TODO: In between each scene add a scene for the number of the level
 		}
 
@@ -135,10 +137,10 @@ public class Main : Game
 
 
 		// !!! Test
-		if (Input.GetMouseButton(0))
-			SceneManager.ChangeScene(0);
-		if (Input.GetMouseButton(1))
-			SceneManager.ChangeScene(2);
+		if (Input.GetMouseButtonDown(0))
+			SceneManager.ChangeScene(SceneManager.CurrentSceneIndex - 1);
+		if (Input.GetMouseButtonDown(1))
+			SceneManager.ChangeScene(SceneManager.CurrentSceneIndex + 1);
 
 		_sceneManager._HandleQueuedScene();
 
@@ -150,8 +152,6 @@ public class Main : Game
 
 	protected override void Draw(GameTime gameTime)
 	{
-		GraphicsDevice.Clear(Color.CornflowerBlue);
-
 		// Camera operations
 		Vector2 clientBounds = new Vector2(Window.ClientBounds.Width, Window.ClientBounds.Height);
 		float camScale = TargetScreenHeight / Camera.Instance.Size;
@@ -159,6 +159,12 @@ public class Main : Game
 
 		Vector2 cameraPosition = -Camera.Instance.Position + (clientBounds * (camScale / windowScale)) / 2f;
 		float cameraSize = camScale * windowScale;
+
+
+
+		// Drawing to target
+		GraphicsDevice.SetRenderTarget(_renderTarget);
+		GraphicsDevice.Clear(Color.CornflowerBlue);
 
 		_spriteDraw.Begin(
 			samplerState: SamplerState.PointClamp,
@@ -170,8 +176,8 @@ public class Main : Game
 
 		// UI screen data
 		WindowSize = Camera.Instance.Dimensions;
-		WindowCenter = -cameraPosition + (clientBounds * (camScale / windowScale)) / 2f;// * cameraSize + WindowSize / 2f;
-		//_spriteDraw.Draw(Pixel, new Rectangle(WindowCenter.ToPoint() - (WindowSize / 2f).ToPoint(), WindowSize.ToPoint()), Color.Gold);
+		WindowCenter = -cameraPosition + (clientBounds * (camScale / windowScale)) / 2f;
+		//_spriteDraw.DrawSimlple(Pixel, WindowCenter - (WindowSize / 2f), 0, WindowSize, Color.Gold, 1f);
 
 		// Drawing the current scene
 		SceneManager.CurrentScene.Draw(_sceneManager.SpriteBatch, _sceneManager.LevelRenderer);
@@ -207,6 +213,14 @@ public class Main : Game
 		//		(int)(WindowSize.X + 1), int.MaxValue),
 		//	Color.Black);
 
+		_spriteDraw.End();
+
+
+
+		// Drawing target to screen
+		GraphicsDevice.SetRenderTarget(null);
+		_spriteDraw.Begin();
+		_spriteDraw.Draw(_renderTarget, new Rectangle(0, 0, _renderTarget.Width, _renderTarget.Height), Color.White);
 		_spriteDraw.End();
 
 		base.Draw(gameTime);

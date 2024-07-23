@@ -16,6 +16,7 @@ internal class Saw : Actor
 	public float[] WaitTime { get; set; }
 	public Vector2[] Points { get; set; }
 	TweenSequence _sequence;
+	public float StartMovingTime { get; set; }
 
 	Texture2D _texture;
 
@@ -26,10 +27,10 @@ internal class Saw : Actor
 	public const float SoundFalloffExponent = 2f;
 	public const float MaxVolume = 0.7f;
 
+
 	public const float RotateSpeed = MathF.Tau * 1f;
 	public const float ColliderSizeMultiplier = 0.75f;
 	Countdown _countdown;
-	public const float StartMovingTime = 9.9f;
 
 	public override void Start(ContentManager content)
 	{
@@ -39,7 +40,7 @@ internal class Saw : Actor
 		_soundEffect.Volume = 0;
 		_soundEffect.Play();
 
-		this.AddCollider(new CircleCollider(Position, Size.X / 2f * ColliderSizeMultiplier, "Spike"));
+		AddCollider(new CircleCollider(Position, Size.X / 2f * ColliderSizeMultiplier, "Spike"));
 
 		_countdown = SceneManager.CurrentScene.GetActor<Countdown>();
 
@@ -80,6 +81,8 @@ internal class Saw : Actor
 			_sequence.Add(new Tween(Points[0], Position, Vector2.Distance(Points[0], Position) / Speed[0]));
 			if (WaitTime[0] > 0)
 				_sequence.AddDelay(WaitTime[0]);
+
+			_sequence.Restart();
 		}
 	}
 
@@ -90,12 +93,12 @@ internal class Saw : Actor
 		_soundEffect.Pan = MathF.Pow(pan, PanningExponent);
 		float volume = Math.Clamp(1f - Vector2.Distance(Collider.ClosestPointOnBounds(Camera.Instance.Position), Camera.Instance.Position) / SoundRadius, 0, 1f);
 		_soundEffect.Volume = Math.Min(MathF.Pow(volume, SoundFalloffExponent), MaxVolume);
-		Main.DebugMessage = _soundEffect.Volume.ToString("F4");
+		//Main.DebugMessage = _soundEffect.Volume.ToString("F4");
 
 		// Moving
 		if (Points.Length == 0)
 			return;
-		if (_countdown.Timer > StartMovingTime)
+		if (_countdown.Time > StartMovingTime)
 			_sequence.Restart();
 
 		Collider.Position = _sequence.Result();

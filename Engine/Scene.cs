@@ -7,7 +7,7 @@ using LDtk.Renderer;
 
 public abstract class Scene
 {
-	List<Actor> _actors;
+	List<Actor> _actors = new List<Actor>();
 	List<Actor> _queuedRemovedActors = new List<Actor>();
 	List<Actor> _queuedAddedActors = new List<Actor>();
 	public LDtkLevel Level { get; set; }
@@ -17,7 +17,6 @@ public abstract class Scene
 	{
 		Level = level;
 		Camera = new(Vector2.Zero, Main.TargetScreenHeight * 1f);
-		_actors = new List<Actor>();
 	}
 
 

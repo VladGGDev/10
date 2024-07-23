@@ -27,4 +27,11 @@ public abstract class Actor : ILDtkEntity
 	public virtual void FixedUpdate() { }
 	public abstract void Draw(SpriteBatch spriteBatch);
 	public virtual void End() { }
+
+
+	public void AddCollider(Collider collider)
+	{
+		Collider = collider;
+		collider.Actor = this;
+	}
 }

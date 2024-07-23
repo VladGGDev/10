@@ -8,16 +8,17 @@ using LDtk.Renderer;
 public class GameScene : Scene
 {
 	List<BoxCollider> _levelColliders = new List<BoxCollider>();
+	
 
-	public GameScene(LDtkLevel level) : base(level)
+	public GameScene(LDtkLevel level, float time) : base(level)
 	{
 		Player player = Level.GetEntity<Player>();
-		Camera = new(player.Position, Main.TargetScreenHeight * 1f);
+		Camera = new(player.Position, Main.TargetScreenHeight * 1f, new(Level.Position, Level.Size - new Point(0, 8)));
 		
 		AddActorRange(Level.GetEntities<Coin>());
 		AddActorRange(Level.GetEntities<Saw>());
 		AddActor(player);
-		AddActor(new Countdown());
+		AddActor(new Countdown(time));
 	}
 
 
@@ -25,6 +26,7 @@ public class GameScene : Scene
 	{
 		base.Start(content);
 
+		// Level collider
 		LDtkIntGrid intGrid = Level.GetIntGrid("Level");
 		for (int i = 0; i < intGrid.Values.Length; i++)
 		{
@@ -46,6 +48,26 @@ public class GameScene : Scene
 			};
 			_levelColliders.Add(new BoxCollider(pos - Vector2.One, Vector2.One * size, tag));
 		}
+
+		// Level bounds collider
+		Vector2 levelPos = Level.Position.ToVector2();
+		Vector2 levelSize = Level.Size.ToVector2();
+		_levelColliders.Add(new(
+			levelPos + new Vector2(-Main.UnitSize / 2f, levelSize.Y / 2f),
+			new Vector2(Main.UnitSize,  levelSize.Y),
+			"Level")); // Left
+		_levelColliders.Add(new(
+			levelPos + new Vector2(levelSize.X + Main.UnitSize / 2f, levelSize.Y / 2f),
+			new Vector2(Main.UnitSize, levelSize.Y),
+			"Level")); // Right
+		_levelColliders.Add(new(
+			levelPos + new Vector2(levelSize.X / 2f, -Main.UnitSize / 2f),
+			new Vector2(levelSize.X, Main.UnitSize),
+			"Level")); // Up
+		_levelColliders.Add(new(
+			levelPos + new Vector2(levelSize.X / 2f, levelSize.Y + Main.UnitSize / 2f),
+			new Vector2(levelSize.X, Main.UnitSize),
+			"Spike")); // Down
 	}
 
 	public override void Draw(SpriteBatch spriteBatch, ExampleRenderer levelRenderer)

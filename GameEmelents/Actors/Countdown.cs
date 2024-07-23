@@ -12,10 +12,16 @@ public class Countdown : Actor
 	SpriteFont _font;
 	Player _player;
 
-	public float Timer = 10f;
+	public float StartTime { get; set; }
+	public float Time { get; set; }
 	bool _started = false;
 	bool _won = false;
 	bool _lost = false;
+
+	public Countdown(float time)
+	{
+		StartTime = Time = time; // I didn't know you could do this in C#
+	}
 
 
 	public override void Start(ContentManager content)
@@ -35,14 +41,14 @@ public class Countdown : Actor
 			else
 				return;
 		}
-		Timer -= Main.DeltaTime;
-		if (Timer <= 0 && !_lost)
+		Time -= Main.DeltaTime;
+		if (Time <= 0 && !_lost)
 			Lose();
 	}
 
 	public override void Draw(SpriteBatch spriteBatch)
 	{
-		string text = MathF.Round(Math.Clamp(Timer, 0, 10f)).ToString();
+		string text = MathF.Round(MathF.Max(0, Time)).ToString();
 		spriteBatch.DrawString(_font,
 			text,
 			Main.WindowCenter,

@@ -76,7 +76,7 @@ internal class Player : Actor
 
 
 	// Camera
-	public float CameraDamping = 0.025f;
+	public float CameraDamping = 1500f;
 
 
 	// Juice
@@ -97,8 +97,7 @@ internal class Player : Actor
 
 	public override void Start(ContentManager content)
 	{
-		this.AddCollider(new BoxCollider(Position, Size - _colliderSizeDiff, "Player"));
-		//Collider = new BoxCollider(Position, Size - _colliderSizeDif, "Player");
+		AddCollider(new BoxCollider(Position, Size - _colliderSizeDiff, "Player"));
 
 		JumpHeight += _colliderSizeDiff.Y;
 		_countdown = SceneManager.CurrentScene.GetActor<Countdown>();
@@ -123,7 +122,10 @@ internal class Player : Actor
 	public override void Update()
 	{
 		// Camera
-		Camera.Instance.Position = Vector2.Lerp(Camera.Instance.Position, Collider.Position, CameraDamping);
+		Camera.Instance.Position = Vector2.Lerp(
+			Camera.Instance.Position, 
+			Camera.Instance.ClosestPointInsideBounds(Collider.Position),
+			1f - MathF.Pow(CameraDamping / 60000f, Main.DeltaTime));
 
 		if (!_countdown.CanPlayerSimulate)
 			return;

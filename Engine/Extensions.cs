@@ -3,12 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 
 public static class ColliderExtensions
 {
-	public static void AddCollider(this Actor actor, Collider collider)
-	{
-		actor.Collider = collider;
-		collider.Actor = actor;
-	}
-
 	public static void AddToActor(this Collider collider, Actor actor)
 	{
 		actor.Collider = collider;

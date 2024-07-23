@@ -17,7 +17,7 @@ internal class Coin : Actor
 
 	public override void Start(ContentManager content)
 	{
-		this.AddCollider(new CircleCollider(Position, Size.X / 2f, "Coin"));
+		AddCollider(new CircleCollider(Position, Size.X / 2f, "Coin"));
 		//Collider = new CircleCollider(Position, Size.X / 2f, "Coin");
 		Coins++;
 	}
