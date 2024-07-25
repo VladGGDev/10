@@ -118,7 +118,9 @@ internal class Saw : Actor
 			Size / _texture.Height,
 			SpriteEffects.None,
 			0.91f);
-		spriteBatch.DrawSquareOutline(Collider.Position, Size * ColliderSizeMultiplier, Color.Black);
+
+		if (Main.DebugGraphics)
+			spriteBatch.DrawCircleOutline(Collider.Position, Size.X / 2 * ColliderSizeMultiplier, Color.Black);
 	}
 
 	public override void End()

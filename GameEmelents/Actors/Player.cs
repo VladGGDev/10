@@ -275,6 +275,9 @@ internal class Player : Actor
 			Size * _sizeMultiplier, 
 			SpriteEffects.None, 
 			0.1f);
+
+		if (Main.DebugGraphics)
+			spriteBatch.DrawSquareOutline(Collider.Position, Size - _colliderSizeDiff, Color.DarkBlue);
 	}
 
 

@@ -75,6 +75,8 @@ public class GameScene : Scene
 		base.Draw(spriteBatch, levelRenderer);
 
 		// Debug draw the colliders
+		if (!Main.DebugGraphics)
+			return;
 		foreach (var col in _levelColliders)
 		{
 			Color c = col.Tag switch

@@ -68,7 +68,7 @@ public class MainMenu : Menu
 
 
 		// ===== Settings =====
-		const float settingsStartY = -250f;
+		const float settingsStartY = -200f;
 		const float settingsButtonDistance = 150f;
 		const float settingsButtonSize = 0.25f;
 		Slider soundSlider = new()
@@ -85,7 +85,7 @@ public class MainMenu : Menu
 		Button backButton = new()
 		{
 			Texture = content.Load<Texture2D>("Icons/Back"),
-			Offset = new(settingsButtonOffset, settingsStartY),
+			Offset = new(settingsButtonOffset, settingsStartY - 75),
 			Size = new(settingsButtonSize),
 
 			OnInteract = () => CurrentGroup = _mainMenu

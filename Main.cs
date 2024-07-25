@@ -23,6 +23,7 @@ public class Main : Game
 	SpriteFont _font;
 
 	// Screen data
+	Point _renderTargetPos;
 	RenderTarget2D _renderTarget;
 	public static Vector2 WindowCenter { get; private set; }
 	public static Vector2 WindowSize { get; private set; }
@@ -45,6 +46,7 @@ public class Main : Game
 	public const float TargetScreenHeight = 1080;
 	public const float TargetAspectRatio = 16f / 9f;
 	public static readonly Vector2 EntityLayerOffset = new(8, 8);  // Don't forget about this
+	public static bool DebugGraphics = true;
 
 
 	public Main()
@@ -58,7 +60,8 @@ public class Main : Game
 	{
 		_spriteDraw = new SpriteBatch(GraphicsDevice);
 		_sceneManager = new(Content, _spriteDraw);
-		_renderTarget = new(GraphicsDevice, (int)(TargetScreenHeight * TargetAspectRatio), (int)TargetScreenHeight);
+		//_renderTarget = new(GraphicsDevice, (int)(TargetScreenHeight * TargetAspectRatio), (int)TargetScreenHeight);
+		Window.ClientSizeChanged += HandleWindowSizeChange;
 
 		// Create the 1x1 square texture
 		Pixel = new Texture2D(GraphicsDevice, 1, 1);
@@ -74,7 +77,7 @@ public class Main : Game
 		Window.AllowUserResizing = true;
 
 		// Fullscreen
-		//_graphicsSettings.IsFullScreen = true;  // reset to true when pixel perfect works
+		_graphicsSettings.IsFullScreen = true;  // reset to true when pixel perfect works
 		_graphicsSettings.PreferredBackBufferWidth = GraphicsDevice.Adapter.CurrentDisplayMode.Width;  // Monitor dimensions
 		_graphicsSettings.PreferredBackBufferHeight = GraphicsDevice.Adapter.CurrentDisplayMode.Height;
 		_graphicsSettings.ApplyChanges();
@@ -106,6 +109,12 @@ public class Main : Game
 
 
 		base.Initialize();
+	}
+
+	protected override void BeginRun()
+	{
+		HandleWindowSizeChange(null, null);
+		base.BeginRun();
 	}
 
 	protected override void LoadContent()
@@ -157,8 +166,12 @@ public class Main : Game
 		float camScale = TargetScreenHeight / Camera.Instance.Size;
 		float windowScale = MathF.Min(clientBounds.Y, clientBounds.X / TargetAspectRatio) / TargetScreenHeight;
 
-		Vector2 cameraPosition = -Camera.Instance.Position + (clientBounds * (camScale / windowScale)) / 2f;
 		float cameraSize = camScale * windowScale;
+		Vector2 cameraPosition = -Camera.Instance.Position; // Follow camera (top left corner)
+		cameraPosition += (clientBounds * (camScale / windowScale)) / 2f; // Center camera
+
+		Vector2 blackBarOffset = new Vector2(clientBounds.X - _renderTarget.Width, clientBounds.Y - _renderTarget.Height) / 2f;
+		cameraPosition -= blackBarOffset / windowScale;
 
 
 
@@ -176,8 +189,8 @@ public class Main : Game
 
 		// UI screen data
 		WindowSize = Camera.Instance.Dimensions;
-		WindowCenter = -cameraPosition + (clientBounds * (camScale / windowScale)) / 2f;
-		//_spriteDraw.DrawSimlple(Pixel, WindowCenter - (WindowSize / 2f), 0, WindowSize, Color.Gold, 1f);
+		WindowCenter = -cameraPosition + WindowSize / 2f;
+		//_spriteDraw.DrawSimlple(Pixel, WindowCenter - (WindowSize / 2f), 0, WindowSize, Color.Gold, 1f); // Fullscreen panel test
 
 		// Drawing the current scene
 		SceneManager.CurrentScene.Draw(_sceneManager.SpriteBatch, _sceneManager.LevelRenderer);
@@ -187,32 +200,6 @@ public class Main : Game
 		Vector2 textMiddlePoint = _font.MeasureString(text) / 2f;
 		_spriteDraw.DrawString(_font, text, WindowCenter, Color.Black, 0f, textMiddlePoint, 1f, SpriteEffects.None, 1f);
 
-		//// Black bars
-		//// Right
-		//_spriteDraw.Draw(Pixel, 
-		//	new Rectangle(
-		//		(int)(WindowCenter.X + WindowSize.X / 2), (int)(WindowCenter.Y - WindowSize.Y / 2),
-		//		int.MaxValue, (int)WindowSize.Y + 1),
-		//	Color.Black);
-		//// Left
-		//_spriteDraw.Draw(Pixel,
-		//	new Rectangle(
-		//		int.MinValue, (int)(WindowCenter.Y - WindowSize.Y / 2),
-		//		int.MinValue + (int)(WindowCenter.X - WindowSize.X / 2), (int)WindowSize.Y + 1),
-		//	Color.Black);
-		//// Up
-		//_spriteDraw.Draw(Pixel,
-		//	new Rectangle(
-		//		(int)(WindowCenter.X - WindowSize.X / 2), int.MinValue,
-		//		(int)(WindowSize.X + 1), int.MinValue + (int)(WindowCenter.Y + WindowSize.Y / 2)),
-		//	Color.Black);
-		//// Down
-		//_spriteDraw.Draw(Pixel,
-		//	new Rectangle(
-		//		(int)(WindowCenter.X - WindowSize.X / 2), (int)(WindowCenter.Y + WindowSize.Y / 2),
-		//		(int)(WindowSize.X + 1), int.MaxValue),
-		//	Color.Black);
-
 		_spriteDraw.End();
 
 
@@ -220,9 +207,33 @@ public class Main : Game
 		// Drawing target to screen
 		GraphicsDevice.SetRenderTarget(null);
 		_spriteDraw.Begin();
-		_spriteDraw.Draw(_renderTarget, new Rectangle(0, 0, _renderTarget.Width, _renderTarget.Height), Color.White);
+		_spriteDraw.Draw(
+			_renderTarget,
+			new Rectangle(_renderTargetPos.X, _renderTargetPos.Y, _renderTarget.Width, _renderTarget.Height),
+			Color.White);
 		_spriteDraw.End();
 
 		base.Draw(gameTime);
+	}
+
+
+
+	void HandleWindowSizeChange(object o, EventArgs e)
+	{
+		Point newScreenSize = Window.ClientBounds.Size;
+		_renderTargetPos = new(0);
+		if (newScreenSize.X < newScreenSize.Y * TargetAspectRatio)
+		{
+			// Horizontal black bars
+			newScreenSize.Y = (int)(newScreenSize.X / TargetAspectRatio);
+			_renderTargetPos.Y = (Window.ClientBounds.Height - newScreenSize.Y) / 2;
+		}
+		else
+		{
+			// Vecrtical black bars
+			newScreenSize.X = (int)(newScreenSize.Y * TargetAspectRatio);
+			_renderTargetPos.X = (Window.ClientBounds.Width - newScreenSize.X) / 2;
+		}
+		_renderTarget = new(GraphicsDevice, newScreenSize.X, newScreenSize.Y);
 	}
 }

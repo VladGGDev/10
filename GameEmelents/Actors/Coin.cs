@@ -41,9 +41,9 @@ internal class Coin : Actor
 			Size, 
 			SpriteEffects.None, 
 			0);
-		// Collider 
-		//spriteBatch.Draw(_texture, Collider.Position, null, new Color(1f, 0, 0, 0.2f), 0, Pivot, Size, SpriteEffects.None, 0.1f);
-		spriteBatch.DrawSquareOutline(Collider.Position, Size, Color.Orange);
+		
+		if (Main.DebugGraphics)
+			spriteBatch.DrawCircleOutline(Collider.Position, Size.X / 2f, Color.DarkOrange);
 	}
 
 	public override void End()
