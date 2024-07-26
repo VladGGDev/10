@@ -33,11 +33,18 @@ public class Slider : MenuElement
 	public float Step { get; set; } = 0.1f;
 	public int Decimals { get; set; } = 1;
 
+	Vector2 _handlePosition;
+	Tween _handleTween;
+
 	public override void Start(ContentManager content)
 	{
 		_colorTween = new FloatTween(0.15f);
 		OnSelected = () => _colorTween.SetStart(0).SetTarget(1).RestartAt(1 - _colorTween.EasedElapsedPercentage);
 		OnDeselected = () => _colorTween.SetStart(1).SetTarget(0).RestartAt(1 - _colorTween.EasedElapsedPercentage);
+
+		_handlePosition = GetHandlePosition();
+		_handleTween = new Tween(_handlePosition, _handlePosition, 0.25f);
+		_handleTween.SetEasing(EasingFunctions.EaseOutCubic);
 	}
 
 	public override void Update()
@@ -47,12 +54,12 @@ public class Slider : MenuElement
 			if (Input.GetActionDown("MenuLeft"))
 			{
 				Value = Math.Clamp(Value - Step, Min, Max);
-				OnValueChanged?.Invoke(Value);
+				ValueChanged();
 			}
 			if (Input.GetActionDown("MenuRight"))
 			{
 				Value = Math.Clamp(Value + Step, Min, Max);
-				OnValueChanged?.Invoke(Value);
+				ValueChanged();
 			}
 		}
 	}
@@ -90,7 +97,7 @@ public class Slider : MenuElement
 		// Slider handle
 		spriteBatch.Draw(
 			Main.Pixel,
-			new Vector2(LerpExtensions.Remap(Min, Max, Position.X - SliderSize.X / 2, Position.X + SliderSize.X / 2, Value), Position.Y),
+			_handleTween.Result(),
 			null,
 			Color.Lerp(NormalColor, SelectedColor, 1 - _colorTween.Result()),
 			0,
@@ -132,4 +139,19 @@ public class Slider : MenuElement
 		Vector2 valueTextSize = Font.MeasureString(valueText);
 		return Texture.Bounds.Size.ToVector2() * TextureSize + Padding + Vector2.UnitX * (Gap * 2f + SliderSize.X + valueTextSize.X);
 	}
+
+
+
+	Vector2 GetHandlePosition()
+	{
+		return new Vector2(LerpExtensions.Remap(Min, Max, Position.X - SliderSize.X / 2, Position.X + SliderSize.X / 2, Value), Position.Y);
+	}
+
+	void ValueChanged()
+	{
+		OnValueChanged?.Invoke(Value);
+		_handleTween.SetStart(_handlePosition).SetTarget(_handlePosition = GetHandlePosition()).RestartAt(1 - _handleTween.EasedElapsedPercentage);
+	}
 }
+
+

@@ -9,7 +9,14 @@ public class MainMenu : Menu
 {
 	MenuGroup _mainMenu;
 	MenuGroup _settings;
+
 	Image _background;
+	Fade _fade = new()
+	{
+		FadeInTime = 0.15f,
+		FadeStayTime = 0f,
+		FadeOutTime = 0.15f
+	};
 
 	public override void Start(ContentManager content)
 	{
@@ -24,21 +31,35 @@ public class MainMenu : Menu
 			Texture = content.Load<Texture2D>("Icons/Play"),
 			Offset = new(0, buttonY),
 			Size = new(bigButtonSize),
-			OnInteract = () => SceneManager.ChangeScene(SceneManager.CurrentSceneIndex + 1)
+			OnInteract = () =>
+			{
+				_fade.FadeInTime = 0.25f;
+				_fade.OnFaded = () => SceneManager.ChangeScene(SceneManager.CurrentSceneIndex + 1);
+				_fade.StartFading();
+			}
 		};
 		Button settingsButton = new()
 		{
 			Texture = content.Load<Texture2D>("Icons/Settings"),
 			Offset = new(buttonDistance, buttonY),
 			Size = new(buttonSize),
-			OnInteract = () => CurrentGroup = _settings
+			OnInteract = () => 
+			{
+				_fade.OnFaded = () => CurrentGroup = _settings;
+				_fade.StartFading();
+			}
 		};
 		Button exitButton = new()
 		{
 			Texture = content.Load<Texture2D>("Icons/Exit"),
 			Offset = new(-buttonDistance, buttonY),
 			Size = new(buttonSize),
-			OnInteract = () => Main.Instance.Exit()
+			OnInteract = () =>
+			{
+				_fade.FadeInTime = 0.25f;
+				_fade.OnFaded = () => Main.Instance.Exit();
+				_fade.StartFading();
+			}
 		};
 		Text gameTitle = new()
 		{
@@ -88,7 +109,11 @@ public class MainMenu : Menu
 			Offset = new(settingsButtonOffset, settingsStartY - 75),
 			Size = new(settingsButtonSize),
 
-			OnInteract = () => CurrentGroup = _mainMenu
+			OnInteract = () =>
+			{
+				_fade.OnFaded = () => CurrentGroup = _mainMenu;
+				_fade.StartFading();
+			}
 		};
 		// Fullscreen toggle and logic
 		Button fullscreenToggle = new()
@@ -122,10 +147,17 @@ public class MainMenu : Menu
 
 	public override void Update()
 	{
+		_fade.Update();
 		_background.Size = Main.WindowSize;
 		if (CurrentGroup == _settings && Input.GetKeyDown(Microsoft.Xna.Framework.Input.Keys.Escape))
 			CurrentGroup = _mainMenu;
 
 		base.Update();
+	}
+
+	public override void Draw(SpriteBatch spriteBatch)
+	{
+		_fade.Draw(spriteBatch);
+		base.Draw(spriteBatch);
 	}
 }
