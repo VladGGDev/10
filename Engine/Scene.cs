@@ -4,14 +4,22 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using LDtk;
 using LDtk.Renderer;
+using System;
+using System.ComponentModel;
 
 public abstract class Scene
 {
-	List<Actor> _actors = new List<Actor>();
+	protected List<Actor> Actors { get; set; } = new List<Actor>();
 	List<Actor> _queuedRemovedActors = new List<Actor>();
 	List<Actor> _queuedAddedActors = new List<Actor>();
 	public LDtkLevel Level { get; set; }
 	public Camera Camera { get; set; }
+
+	// Events
+	public event EventHandler<CollectionChangeEventArgs> ActorsListChanged;
+	bool _didFirstUpdate = false;
+	public event EventHandler FirstUpdate;
+	public event EventHandler SceneEnded;
 
 	public Scene(LDtkLevel level)
 	{
@@ -23,20 +31,22 @@ public abstract class Scene
 	public virtual void Start(ContentManager content)
 	{
 		HandleActorQueues();
-		foreach (var actor in _actors)
+		foreach (var actor in Actors)
 			actor.Start(content);
 	}
 
 	public virtual void Update()
 	{
-		foreach (var actor in _actors)
+		OnFirstUpdate();
+
+		foreach (var actor in Actors)
 			actor.Update();
 		HandleActorQueues();
 	}
 
 	public virtual void FixedUpdate()
 	{
-		foreach (var actor in _actors)
+		foreach (var actor in Actors)
 			actor.FixedUpdate();
 		HandleActorQueues();
 	}
@@ -47,15 +57,38 @@ public abstract class Scene
 		if (Level != null)
 			levelRenderer.RenderPrerenderedLevel(Level);
 
-		foreach (var actor in _actors)
+		foreach (var actor in Actors)
 			actor.Draw(spriteBatch);
 	}
 
 	public virtual void End()
 	{
 		Collider.Colliders.Clear();
-		foreach (var actor in _actors)
+		foreach (var actor in Actors)
 			actor.End();
+
+		OnSceneEnded();
+	}
+
+
+
+	protected virtual void OnFirstUpdate()
+	{
+		if (!_didFirstUpdate)
+		{
+			FirstUpdate?.Invoke(this, EventArgs.Empty);
+			_didFirstUpdate = true;
+		}
+	}
+
+	protected virtual void OnSceneEnded()
+	{
+		SceneEnded?.Invoke(this, EventArgs.Empty);
+	}
+
+	protected virtual void OnActorListChanged(CollectionChangeAction eventArgs, Actor actor)
+	{
+		ActorsListChanged?.Invoke(this, new CollectionChangeEventArgs(eventArgs, actor));
 	}
 
 
@@ -65,49 +98,60 @@ public abstract class Scene
 	public void AddActor(Actor actor)
 	{
 		_queuedAddedActors.Add(actor);
+		OnActorListChanged(CollectionChangeAction.Add, actor);
 	}
 
 	public void AddActorRange(IEnumerable<Actor> actors)
 	{
 		_queuedAddedActors.AddRange(actors);
+
+		if (ActorsListChanged != null)
+			foreach (var actor in actors)
+				OnActorListChanged(CollectionChangeAction.Add, actor);
 	}
 
 	public void RemoveActor(Actor actor)
 	{
 		_queuedRemovedActors.Add(actor);
+		OnActorListChanged(CollectionChangeAction.Remove, actor);
 	}
 
 	public void RemoveActorRange(IEnumerable<Actor> actors)
 	{
 		_queuedRemovedActors.AddRange(actors);
+
+		if (ActorsListChanged != null)
+			foreach (var actor in actors)
+				OnActorListChanged(CollectionChangeAction.Remove, actor);
 	}
 
-	public ActorType GetActor<ActorType>() where ActorType : Actor
+	public ActorT GetActor<ActorT>() where ActorT : Actor
 	{
-		return _actors.Find((Actor actor) => actor is ActorType) as ActorType;
+		return Actors.Find((Actor actor) => actor is ActorT) as ActorT;
 	}
 
-	//public Actor GetActor<ActorType>(Func<Actor, bool> predicate)
-	//{
-	//	return _actors.Find((Actor actor) => actor is ActorType && predicate(actor));
-	//}
-
-	public ActorType[] GetAllActors<ActorType>() where ActorType : Actor
+	// predicate can also be a delegate of type Predicate<ActorT>
+	public ActorT GetActor<ActorT>(Func<ActorT, bool> predicate) where ActorT : Actor
 	{
-		return (_actors.FindAll((Actor actor) => actor is ActorType) as List<ActorType>).ToArray();
+		return Actors.Find((Actor actor) => actor is ActorT && predicate(actor as ActorT)) as ActorT;
 	}
 
-	//public Actor[] GetAllActors<ActorType>(Func<Actor, bool> predicate)
-	//{
-	//	return _actors.FindAll((Actor actor) => actor is ActorType && predicate(actor)).ToArray();
-	//}
+	public ActorT[] GetAllActors<ActorT>() where ActorT : Actor
+	{
+		return (Actors.FindAll((Actor actor) => actor is ActorT) as List<ActorT>).ToArray();
+	}
+
+	public ActorT[] GetAllActors<ActorT>(Func<ActorT, bool> predicate) where ActorT : Actor
+	{
+		return (Actors.FindAll((Actor actor) => actor is ActorT && predicate(actor as ActorT)) as List<ActorT>).ToArray();
+	}
 
 	void HandleActorQueues()
 	{
 		// Remove actors
 		foreach (var actor in _queuedRemovedActors)
 		{
-			_actors.Remove(actor);
+			Actors.Remove(actor);
 			Collider.Colliders.Remove(actor?.Collider);
 		}
 		_queuedRemovedActors.Clear();
@@ -115,7 +159,7 @@ public abstract class Scene
 		// Add actors
 		foreach (var actor in _queuedAddedActors)
 		{
-			_actors.Add(actor);
+			Actors.Add(actor);
 			actor.Position += Main.EntityLayerOffset;
 		}
 		_queuedAddedActors.Clear();

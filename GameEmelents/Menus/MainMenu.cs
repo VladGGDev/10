@@ -11,6 +11,7 @@ public class MainMenu : Menu
 	MenuGroup _settings;
 
 	Image _background;
+
 	Fade _fade = new()
 	{
 		FadeInTime = 0.15f,
@@ -45,6 +46,8 @@ public class MainMenu : Menu
 			Size = new(buttonSize),
 			OnInteract = () => 
 			{
+				_fade.FadeInTime = 0.15f;
+				_fade.FadeOutTime = 0.15f;
 				_fade.OnFaded = () => CurrentGroup = _settings;
 				_fade.StartFading();
 			}
@@ -56,17 +59,17 @@ public class MainMenu : Menu
 			Size = new(buttonSize),
 			OnInteract = () =>
 			{
-				_fade.FadeInTime = 0.25f;
+				_fade.FadeInTime = 0.35f;
 				_fade.OnFaded = () => Main.Instance.Exit();
 				_fade.StartFading();
 			}
 		};
 		Text gameTitle = new()
 		{
-			Font = content.Load<SpriteFont>("Fonts/Roboto-Light"),
+			Font = content.Load<SpriteFont>("Fonts/Roboto-Light-Big"),
 			String = "10",
 			Offset = new(0, -300f),
-			Size = new(4f)
+			Size = new(0.25f)
 		};
 		_background = new()
 		{
@@ -142,7 +145,10 @@ public class MainMenu : Menu
 
 		_mainMenu.Start(content);
 		_settings.Start(content);
+
 		CurrentGroup = _mainMenu;
+		_fade.FadeOutTime = 1f;
+		_fade.ForceFadeOut();
 	}
 
 	public override void Update()
@@ -150,7 +156,10 @@ public class MainMenu : Menu
 		_fade.Update();
 		_background.Size = Main.WindowSize;
 		if (CurrentGroup == _settings && Input.GetKeyDown(Microsoft.Xna.Framework.Input.Keys.Escape))
-			CurrentGroup = _mainMenu;
+		{
+			_fade.OnFaded = () => CurrentGroup = _mainMenu;
+			_fade.StartFading();
+		}
 
 		base.Update();
 	}

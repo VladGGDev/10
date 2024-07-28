@@ -15,9 +15,9 @@ public class GameScene : Scene
 		Player player = Level.GetEntity<Player>();
 		Camera = new(player.Position, Main.TargetScreenHeight * 1f, new(Level.Position, Level.Size - new Point(0, 8)));
 		
-		AddActorRange(Level.GetEntities<Coin>());
+		AddActorRange(Level.GetEntities<Coin>()); // Or Actors.AddRange(Level.GetEntities<Coin>());
 		AddActorRange(Level.GetEntities<Saw>());
-		AddActor(player);
+		AddActor(player); // Or Actors.Add(player);
 		AddActor(new Countdown(time));
 	}
 

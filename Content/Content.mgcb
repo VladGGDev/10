@@ -16,6 +16,13 @@
 #begin 10 level.ldtk
 /copy:10 level.ldtk
 
+#begin Fonts/Roboto-Light-Big.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Roboto-Light-Big.spritefont
+
 #begin Fonts/Roboto-Light.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor

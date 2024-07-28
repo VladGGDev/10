@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using System;
+using Menus.MenuElements;
+using System.Diagnostics;
 
 public class Countdown : Actor
 {
@@ -18,6 +20,12 @@ public class Countdown : Actor
 	bool _won = false;
 	bool _lost = false;
 
+	Fade _fade = new() 
+	{ 
+		FadeInTime = 0.5f,
+		FadeOutTime = 0.5f
+	};
+
 	public Countdown(float time)
 	{
 		StartTime = Time = time; // I didn't know you could do this in C#
@@ -26,22 +34,23 @@ public class Countdown : Actor
 
 	public override void Start(ContentManager content)
 	{
-		_font = content.Load<SpriteFont>("Fonts/Roboto-Light");
+		_font = content.Load<SpriteFont>("Fonts/Roboto-Light-Big");
 		_player = SceneManager.CurrentScene.GetActor<Player>();
+		SceneManager.CurrentScene.FirstUpdate += (o, e) => FadeFromBlack();
 	}
 
 	public override void Update()
 	{
+		_fade.Update();
 		if (!_started)
 		{
-			if (Input.GetKeyDown(Keys.A) || Input.GetKeyDown(Keys.D) || Input.GetKeyDown(Keys.W) ||
-				Input.GetKeyDown(Keys.Left) || Input.GetKeyDown(Keys.Right) || Input.GetKeyDown(Keys.Up) ||
-				Input.GetKeyDown(Keys.Space))
+			if (Input.GetActionDown("Left") || Input.GetActionDown("Right") || Input.GetActionDown("Jump"))
 				_started = true;
 			else
 				return;
 		}
-		Time -= Main.DeltaTime;
+		if (!_won && !_lost)
+			Time -= Main.DeltaTime;
 		if (Time <= 0 && !_lost)
 			Lose();
 	}
@@ -55,9 +64,11 @@ public class Countdown : Actor
 			Color.WhiteSmoke,
 			0f,
 			_font.MeasureString(text) / 2,
-			1.5f,
+			1f,
 			SpriteEffects.None,
-			0.0f);
+			0.8f);
+
+		_fade.Draw(spriteBatch);
 	}
 
 
@@ -70,10 +81,12 @@ public class Countdown : Actor
 		_ = new Timeout(250f, () =>
 		{
 			SceneManager.CurrentScene.RemoveActor(_player);
-			_ = new Timeout(250f, () =>
-			{
-				SceneManager.ChangeScene(SceneManager.CurrentSceneIndex);
-			});
+			_fade.OnFaded = () => SceneManager.ChangeScene(SceneManager.CurrentSceneIndex);
+			FadeToBlack();
+			//_ = new Timeout(250f, () =>
+			//{
+			//	SceneManager.ChangeScene(SceneManager.CurrentSceneIndex);
+			//});
 		});
 	}
 
@@ -82,9 +95,21 @@ public class Countdown : Actor
 		_won = true;
 		CanPlayerMove = false;
 		CanPlayerSimulate = false;
-		_ = new Timeout(1000f, () =>
+		_ = new Timeout(1000f - _fade.FadeInTime * 1000, () =>
 		{
-			SceneManager.ChangeScene(SceneManager.CurrentSceneIndex + 1);
+			_fade.OnFaded = () => SceneManager.ChangeScene(SceneManager.CurrentSceneIndex + 1);
+			FadeToBlack();
 		});
+	}
+
+
+	void FadeToBlack()
+	{
+		_fade.StartFading();
+	}
+
+	void FadeFromBlack()
+	{
+		_fade.ForceFadeOut();
 	}
 }

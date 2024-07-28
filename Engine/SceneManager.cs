@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using LDtk;
 using LDtk.Renderer;
 using Microsoft.Xna.Framework;
@@ -64,10 +65,14 @@ public class SceneManager
 	{
 		if (_queuedSceneIndex == -1)
 			return;
+		Main.CanDraw = false;
 		CurrentScene?.End();
 		CurrentSceneIndex = _queuedSceneIndex;
 		CurrentScene = Activator.CreateInstance(_sceneData[_queuedSceneIndex].SceneType, _sceneData[_queuedSceneIndex].ConstructorParams) as Scene;
 		CurrentScene.Start(_content);
+
+		CurrentScene.FirstUpdate += (o, e) => Main.CanDraw = true;
+
 		_queuedSceneIndex = -1;
 	}
 }

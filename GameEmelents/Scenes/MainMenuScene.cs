@@ -15,15 +15,18 @@ public class MainMenuScene : Scene
 	public override void Start(ContentManager content)
 	{
 		_mainMenu.Start(content);
+		base.Start(content);
 	}
 
 	public override void Update()
 	{
 		_mainMenu.Update();
+		base.Update();
 	}
 
 	public override void Draw(SpriteBatch spriteBatch, ExampleRenderer levelRenderer)
 	{
 		_mainMenu.Draw(spriteBatch);
+		base.Draw(spriteBatch, levelRenderer);
 	}
 }

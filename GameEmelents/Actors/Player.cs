@@ -97,7 +97,10 @@ internal class Player : Actor
 
 	public override void Start(ContentManager content)
 	{
-		AddCollider(new BoxCollider(Position, Size - _colliderSizeDiff, "Player"));
+		AddCollider(new BoxCollider(
+			Position - Size * Pivot * 0.5f + new Vector2(0, _colliderSizeDiff.Y * 0.5f),
+			Size - _colliderSizeDiff,
+			"Player"));
 
 		JumpHeight += _colliderSizeDiff.Y;
 		_countdown = SceneManager.CurrentScene.GetActor<Countdown>();
@@ -115,7 +118,7 @@ internal class Player : Actor
 		_jumpTween
 			.Add(new Tween(Vector2.One, jumpSize, 0.1f).SetEasing(EasingFunctions.EaseInOutQuad))
 			.Add(new Tween(jumpSize, Vector2.One, 0.25f).SetEasing(EasingFunctions.EaseInOutQuad));
-		_landTween.RestartAt(1f);
+		_landTween.RestartAt(1f); // Don't play
 		_jumpTween.RestartAt(1f);
 	}
 
@@ -145,6 +148,10 @@ internal class Player : Actor
 			_input = 0;
 		if (_input > 0 && Input.GetActionUp("Right"))
 			_input = 0;
+
+
+		if (Input.GetKeyDown(Keys.R))
+			_countdown.Lose();
 
 
 		// Timers
@@ -261,6 +268,12 @@ internal class Player : Actor
 		Velocity.X += speedResult;
 		Collider.Position += Vector2.UnitX * Velocity.X;
 		HandleCollision(CollisionAxis.Horizontal);
+
+
+		static float Approach(float value, float finalValue, float max)
+		{
+			return Math.Clamp(finalValue - value, -max, max);
+		}
 	}
 
 	public override void Draw(SpriteBatch spriteBatch)
@@ -280,12 +293,6 @@ internal class Player : Actor
 			spriteBatch.DrawSquareOutline(Collider.Position, Size - _colliderSizeDiff, Color.DarkBlue);
 	}
 
-
-
-	float Approach(float value, float finalValue, float max)
-	{
-		return Math.Clamp(finalValue - value, -max, max);
-	}
 
 
 

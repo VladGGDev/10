@@ -15,6 +15,8 @@ public class Main : Game
 
 	public static Main Instance { get; private set; }
 
+	public static bool CanDraw = true;
+
 	// 1x1 pixel texture
 	public static Texture2D Pixel;
 
@@ -77,7 +79,7 @@ public class Main : Game
 		Window.AllowUserResizing = true;
 
 		// Fullscreen
-		_graphicsSettings.IsFullScreen = true;  // reset to true when pixel perfect works
+		//_graphicsSettings.IsFullScreen = true;  // reset to true when pixel perfect works
 		_graphicsSettings.PreferredBackBufferWidth = GraphicsDevice.Adapter.CurrentDisplayMode.Width;  // Monitor dimensions
 		_graphicsSettings.PreferredBackBufferHeight = GraphicsDevice.Adapter.CurrentDisplayMode.Height;
 		_graphicsSettings.ApplyChanges();
@@ -100,7 +102,7 @@ public class Main : Game
 		_sceneManager.AddScene<MainMenuScene>(null);
 		foreach (var level in _sceneManager.WorldLevels)
 		{
-			_sceneManager.AddScene<GameScene>(level,10f);
+			_sceneManager.AddScene<GameScene>(level, 10f);
 			// TODO: In between each scene add a scene for the number of the level
 		}
 
@@ -124,7 +126,10 @@ public class Main : Game
 	
 	protected override void Update(GameTime gameTime)
 	{
-		if (Input.GetKeyDown(Keys.Escape))
+		if (!IsActive)
+			return;
+
+		if (Input.GetKeyDown(Keys.Escape)) // Delete when game is finished
 			Exit();
 
 		// Time
@@ -144,12 +149,15 @@ public class Main : Game
 		}
 		SceneManager.CurrentScene.Update();
 
-
 		// !!! Test
 		if (Input.GetMouseButtonDown(0))
 			SceneManager.ChangeScene(SceneManager.CurrentSceneIndex - 1);
 		if (Input.GetMouseButtonDown(1))
 			SceneManager.ChangeScene(SceneManager.CurrentSceneIndex + 1);
+			//SceneManager.ChangeScene(1);
+
+		if (Input.GetKeyDown(Keys.Q))
+			CanDraw = !CanDraw;
 
 		_sceneManager._HandleQueuedScene();
 
@@ -159,8 +167,16 @@ public class Main : Game
 		base.Update(gameTime);
 	}
 
+	protected override bool BeginDraw()
+	{
+		return CanDraw;
+	}
+
 	protected override void Draw(GameTime gameTime)
 	{
+		if (!IsActive)
+			return;
+
 		// Camera operations
 		Vector2 clientBounds = new Vector2(Window.ClientBounds.Width, Window.ClientBounds.Height);
 		float camScale = TargetScreenHeight / Camera.Instance.Size;

@@ -4,7 +4,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Menus;
 using Tweening;
 using Microsoft.Xna.Framework.Content;
-using System.Runtime.CompilerServices;
+
+namespace Menus.MenuElements;
 
 public class Fade : MenuElement
 {
@@ -86,9 +87,16 @@ public class Fade : MenuElement
 
 	public void StartFading()
 	{
-		if (_fadeState != FadeState.Idle)
+		//if (_fadeState != FadeState.Idle)
+		if (_fadeState == FadeState.FadingIn)
 			return;
 		_fadeState = FadeState.FadingIn;
-		_tween.SetStart(0).SetTarget(1).SetDuration(FadeInTime).Restart();
+		_tween.SetStart(1 - _tween.ElapsedPercentage).SetTarget(1).SetDuration(FadeInTime * _tween.ElapsedPercentage).Restart();
+	}
+
+	public void ForceFadeOut()
+	{
+		_tween.SetStart(1).SetTarget(0).SetDuration(FadeOutTime).Restart();
+		_fadeState = FadeState.FadingOut;
 	}
 }

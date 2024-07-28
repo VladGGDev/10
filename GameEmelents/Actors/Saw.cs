@@ -19,6 +19,7 @@ internal class Saw : Actor
 	public float StartMovingTime { get; set; }
 
 	Texture2D _texture;
+	Player _player;
 
 	// Sound
 	SoundEffectInstance _soundEffect;
@@ -34,6 +35,7 @@ internal class Saw : Actor
 
 	public override void Start(ContentManager content)
 	{
+		_player = SceneManager.CurrentScene.GetActor<Player>();
 		_texture = content.Load<Texture2D>("Sawblade");
 		_soundEffect = content.Load<SoundEffect>("Sounds/Saw").CreateInstance();
 		_soundEffect.IsLooped = true;
@@ -91,8 +93,9 @@ internal class Saw : Actor
 		// Sounds
 		float pan = Vector2.Normalize(Collider.Position - Camera.Instance.Position).X;
 		_soundEffect.Pan = MathF.Pow(pan, PanningExponent);
-		float volume = Math.Clamp(1f - Vector2.Distance(Collider.ClosestPointOnBounds(Camera.Instance.Position), Camera.Instance.Position) / SoundRadius, 0, 1f);
-		_soundEffect.Volume = Math.Min(MathF.Pow(volume, SoundFalloffExponent), MaxVolume);
+		float volume = Math.Clamp(1f - Vector2.Distance(Collider.ClosestPointOnBounds(_player.Collider.Position), _player.Collider.Position) / SoundRadius, 0, 1f);
+		volume = MathF.Pow(volume, SoundFalloffExponent);
+		_soundEffect.Volume = LerpExtensions.Remap(0, 1f, 0, MaxVolume, volume);
 		//Main.DebugMessage = _soundEffect.Volume.ToString("F4");
 
 		// Moving
@@ -117,7 +120,7 @@ internal class Saw : Actor
 			_texture.Bounds.Center.ToVector2(),
 			Size / _texture.Height,
 			SpriteEffects.None,
-			0.91f);
+			0.2f);
 
 		if (Main.DebugGraphics)
 			spriteBatch.DrawCircleOutline(Collider.Position, Size.X / 2 * ColliderSizeMultiplier, Color.Black);

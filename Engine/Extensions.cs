@@ -65,7 +65,7 @@ public static class SpriteBatchExtensions
 
 	public static void DrawCircleOutline(this SpriteBatch spriteBatch, Vector2 position, float radius, Color color)
 	{
-		float resolution = 5 * radius;
+		float resolution = MathF.Tau * radius; // length of circumference = 2*PI*R
 		for (int i = 0; i < resolution; i++)
 		{
 			float rad = MathF.Tau / resolution * i;
