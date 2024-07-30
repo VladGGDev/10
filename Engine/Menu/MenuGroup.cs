@@ -133,7 +133,7 @@ public class MenuGroup
 
 
 	// Input handling
-	void HandleInput()
+	protected virtual void HandleInput()
 	{
 		MenuElement prev = SelectedElement;
 

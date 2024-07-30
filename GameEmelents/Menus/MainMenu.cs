@@ -123,7 +123,9 @@ public class MainMenu : Menu
 		{
 			Texture = content.Load<Texture2D>("Icons/Toggle Fullscreen"),
 			Offset = new(settingsButtonOffset, settingsStartY + settingsButtonDistance * 2f),
-			Size = new(settingsButtonSize)
+			Size = new(settingsButtonSize),
+
+			OnInteract = () => Main.IsFullscreen = !Main.IsFullscreen
 		};
 		Button deleteSaveButton = new()
 		{

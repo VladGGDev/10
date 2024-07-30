@@ -17,7 +17,6 @@ public abstract class Actor : ILDtkEntity
 	public string Identifier { get; set; }
 	public Guid Iid { get; set; }
 	public int Uid { get; set; }
-
 	public Rectangle Tile { get; set; }
 	public Color SmartColor { get; set; }
 

@@ -2,10 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
-using LDtk;
-using LDtk.Renderer;
-using Tweening;
 using System.Diagnostics;
+using Microsoft.Xna.Framework.Audio;
 
 public class Main : Game
 {
@@ -20,9 +18,13 @@ public class Main : Game
 	// 1x1 pixel texture
 	public static Texture2D Pixel;
 
-	// Debug message
-	public static string DebugMessage = "";
+	// Debug
 	SpriteFont _font;
+	public static string DebugMessage { get; set; } = "";
+
+	public static bool ShowFps { get; set; } = false;
+	static System.Collections.Generic.Queue<float> _fpsQueue = new();
+	public static float SmoothFPS { get; private set; }
 
 	// Screen data
 	Point _renderTargetPos;
@@ -30,8 +32,38 @@ public class Main : Game
 	public static Vector2 WindowCenter { get; private set; }
 	public static Vector2 WindowSize { get; private set; }
 
+	static bool _isFullscreen;
+	public static bool IsFullscreen
+	{
+		get => _isFullscreen;
+		set
+		{
+			_isFullscreen = value;
+			Instance._graphicsSettings.IsFullScreen = value;
+			Instance._graphicsSettings.PreferredBackBufferWidth = Instance.GraphicsDevice.Adapter.CurrentDisplayMode.Width;  // Monitor dimensions
+			Instance._graphicsSettings.PreferredBackBufferHeight = Instance.GraphicsDevice.Adapter.CurrentDisplayMode.Height;
+		 	Instance._graphicsSettings.ApplyChanges();
+			
+			// Move the window down if the handle is offscreen
+			if (value == false && Instance.Window.Position.Y <= 0)
+				Instance.Window.Position = new(0, 50);
+		}
+	}
+
+	static bool _vsyncActive;
+	public static bool VsyncActive
+	{
+		get => _vsyncActive;
+		set
+		{
+			_vsyncActive = value;
+			Instance._graphicsSettings.SynchronizeWithVerticalRetrace = value;
+			Instance._graphicsSettings.ApplyChanges();
+		}
+	}
+
 	// Time
-	public static float TimeScale { get; private set; } = 1f;
+	public static float TimeScale { get; set; } = 1f;
 
 	public static float DeltaTime { get; private set; }
 	public static float UnscaledDeltaTime { get; private set; }
@@ -48,7 +80,7 @@ public class Main : Game
 	public const float TargetScreenHeight = 1080;
 	public const float TargetAspectRatio = 16f / 9f;
 	public static readonly Vector2 EntityLayerOffset = new(8, 8);  // Don't forget about this
-	public static bool DebugGraphics = true;
+	public const bool DebugGraphics = true; // Set to false when releasing
 
 
 	public Main()
@@ -62,7 +94,6 @@ public class Main : Game
 	{
 		_spriteDraw = new SpriteBatch(GraphicsDevice);
 		_sceneManager = new(Content, _spriteDraw);
-		//_renderTarget = new(GraphicsDevice, (int)(TargetScreenHeight * TargetAspectRatio), (int)TargetScreenHeight);
 		Window.ClientSizeChanged += HandleWindowSizeChange;
 
 		// Create the 1x1 square texture
@@ -70,7 +101,7 @@ public class Main : Game
 		Pixel.SetData(new[] { Color.White });
 
 		// Setup
-		IsMouseVisible = true;  // Set to false
+		IsMouseVisible = true;  // Set to false when releasing
 		IsFixedTimeStep = false;
 		//IsFixedTimeStep = true;
 		//TargetElapsedTime = new TimeSpan(0, 0, 0, 0, 1000 / 144);
@@ -78,11 +109,8 @@ public class Main : Game
 		Window.AllowAltF4 = true;
 		Window.AllowUserResizing = true;
 
-		// Fullscreen
-		//_graphicsSettings.IsFullScreen = true;  // reset to true when pixel perfect works
-		_graphicsSettings.PreferredBackBufferWidth = GraphicsDevice.Adapter.CurrentDisplayMode.Width;  // Monitor dimensions
-		_graphicsSettings.PreferredBackBufferHeight = GraphicsDevice.Adapter.CurrentDisplayMode.Height;
-		_graphicsSettings.ApplyChanges();
+		VsyncActive = true; // set from save file
+		IsFullscreen = false;
 
 
 		// Input actions
@@ -122,6 +150,7 @@ public class Main : Game
 	protected override void LoadContent()
 	{
 		_font = Content.Load<SpriteFont>("Fonts/Roboto-Light");
+		_ = Content.Load<SoundEffect>("Sounds/Saw"); // Preload big files
 	}
 	
 	protected override void Update(GameTime gameTime)
@@ -139,6 +168,19 @@ public class Main : Game
 			UnscaledDeltaTime = 0.0000001f;
 		DeltaTime = UnscaledDeltaTime * TimeScale;
 		TotalTime += DeltaTime;
+
+		// Smooth FPS
+		if (ShowFps)
+		{
+			_fpsQueue.Enqueue(1f / UnscaledDeltaTime);
+			if (_fpsQueue.Count == 100)
+			{
+				_fpsQueue.Dequeue();
+				foreach (var item in _fpsQueue)
+					SmoothFPS += item;
+				SmoothFPS /= 100f;
+			}
+		}
 
 		// Scene updating
 		_nextFixedTimestep += UnscaledDeltaTime;
@@ -214,7 +256,40 @@ public class Main : Game
 		// Debug text
 		string text = DebugMessage;
 		Vector2 textMiddlePoint = _font.MeasureString(text) / 2f;
-		_spriteDraw.DrawString(_font, text, WindowCenter, Color.Black, 0f, textMiddlePoint, 1f, SpriteEffects.None, 1f);
+		_spriteDraw.DrawString(
+			_font,
+			text, WindowCenter,
+			Color.Black, 
+			0f,
+			textMiddlePoint,
+			1f,
+			SpriteEffects.None,
+			1f);
+
+		// FPS
+		if (ShowFps)
+		{
+			_spriteDraw.DrawString(
+				_font,
+				SmoothFPS.ToString("F1"),
+				WindowCenter - WindowSize / 2f,
+				Color.White,
+				0,
+				Vector2.Zero,
+				0.5f,
+				SpriteEffects.None,
+				1f);
+			_spriteDraw.DrawString(
+				_font,
+				SmoothFPS.ToString("F1"),
+				WindowCenter - WindowSize / 2f - new Vector2(2f),
+				Color.Black,
+				0,
+				Vector2.Zero,
+				0.55f,
+				SpriteEffects.None,
+				0.999f);
+		}
 
 		_spriteDraw.End();
 
