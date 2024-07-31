@@ -192,7 +192,7 @@ internal class Player : Actor
 
 	public override void FixedUpdate()
 	{
-		if (!_countdown.CanPlayerSimulate)
+		if (!_countdown.CanPlayerSimulate || Main.TimeScale == 0)
 			return;
 		removedCoinThisFrame = false;
 
@@ -222,7 +222,6 @@ internal class Player : Actor
 			_usedLandTween = prevYVel > VelToLand ? _landTween : _smallLandTween;
 			_landTween.Restart();
 			_smallLandTween.Restart();
-			//_usedLandTween.Restart();
 		}
 
 

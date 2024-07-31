@@ -43,6 +43,6 @@ public class Image : MenuElement
 			Pivot,
 			Texture.Bounds.Size.ToVector2() * Size + Padding,
 			SpriteEffects.None,
-			LayerDepth - 0.1f);
+			LayerDepth - 0.01f);
 	}
 }

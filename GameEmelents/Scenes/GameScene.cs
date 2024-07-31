@@ -8,7 +8,7 @@ using LDtk.Renderer;
 public class GameScene : Scene
 {
 	List<BoxCollider> _levelColliders = new List<BoxCollider>();
-	
+	PauseMenu _pauseMenu = new();
 
 	public GameScene(LDtkLevel level, float time) : base(level)
 	{
@@ -25,6 +25,8 @@ public class GameScene : Scene
 	public override void Start(ContentManager content)
 	{
 		base.Start(content);
+
+		_pauseMenu.Start(content);
 
 		// Level collider
 		LDtkIntGrid intGrid = Level.GetIntGrid("Level");
@@ -70,8 +72,15 @@ public class GameScene : Scene
 			"Spike")); // Down
 	}
 
+	public override void Update()
+	{
+		_pauseMenu.Update();
+		base.Update();
+	}
+
 	public override void Draw(SpriteBatch spriteBatch, ExampleRenderer levelRenderer)
 	{
+		_pauseMenu.Draw(spriteBatch);
 		base.Draw(spriteBatch, levelRenderer);
 
 		// Debug draw the colliders

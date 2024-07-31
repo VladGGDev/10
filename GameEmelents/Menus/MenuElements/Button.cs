@@ -19,9 +19,11 @@ public class Button : MenuElement
 
 	public Action OnInteract { get; set; }
 
+	public bool UseUnscaledTime = false;
+
 	public override void Start(ContentManager content)
 	{
-		_colorTween = new FloatTween(0.15f);
+		_colorTween = new FloatTween(0.15f) { UseUnscaledTime = UseUnscaledTime };
 		OnSelected = () => _colorTween.SetStart(0).SetTarget(1).RestartAt(1 - _colorTween.EasedElapsedPercentage);
 		OnDeselected = () => _colorTween.SetStart(1).SetTarget(0).RestartAt(1 - _colorTween.EasedElapsedPercentage);
 	}
@@ -54,6 +56,6 @@ public class Button : MenuElement
 			Pivot,
 			Texture.Bounds.Size.ToVector2() * Size + Padding,
 			SpriteEffects.None,
-			LayerDepth - 0.1f);
+			LayerDepth - 0.01f);
 	}
 }

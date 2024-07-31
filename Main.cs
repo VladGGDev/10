@@ -68,7 +68,7 @@ public class Main : Game
 	public static float DeltaTime { get; private set; }
 	public static float UnscaledDeltaTime { get; private set; }
 	public static float UnscaledFixedDeltaTime { get; private set; } = 1f / 144f;
-	public static float FixedDeltaTime { get; private set; } = UnscaledFixedDeltaTime * TimeScale;
+	public static float FixedDeltaTime => UnscaledFixedDeltaTime * TimeScale;
 	public static float TotalTime { get; private set; } = 0;
 	public static float UnscaledTotalTime { get; private set; } = 0;
 
@@ -158,8 +158,8 @@ public class Main : Game
 		if (!IsActive)
 			return;
 
-		if (Input.GetKeyDown(Keys.Escape)) // Delete when game is finished
-			Exit();
+		//if (Input.GetKeyDown(Keys.Escape)) // Delete when game is finished
+		//	Exit();
 
 		// Time
 		UnscaledDeltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;

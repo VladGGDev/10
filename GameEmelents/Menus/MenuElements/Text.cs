@@ -45,6 +45,6 @@ public class Text : MenuElement
 			Pivot,
 			textSize * Size + Padding,
 			SpriteEffects.None,
-			LayerDepth - 0.1f);
+			LayerDepth - 0.01f);
 	}
 }

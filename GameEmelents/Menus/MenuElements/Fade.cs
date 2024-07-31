@@ -16,7 +16,7 @@ public class Fade : MenuElement
 	public float FadeStayTime { get; set; } = 0.1f;
 	public float FadeOutTime { get; set; } = 0.25f;
 
-	FloatTween _tween = new();
+	FloatTween _tween = new() { UseUnscaledTime = true };
 
 	float _alpha = 0;
 	FadeState _fadeState = FadeState.Idle;

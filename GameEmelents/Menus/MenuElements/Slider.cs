@@ -33,7 +33,6 @@ public class Slider : MenuElement
 	public float Step { get; set; } = 0.1f;
 	public int Decimals { get; set; } = 1;
 
-	Vector2 _handlePosition;
 	Tween _handleTween;
 
 	public override void Start(ContentManager content)
@@ -42,8 +41,8 @@ public class Slider : MenuElement
 		OnSelected = () => _colorTween.SetStart(0).SetTarget(1).RestartAt(1 - _colorTween.EasedElapsedPercentage);
 		OnDeselected = () => _colorTween.SetStart(1).SetTarget(0).RestartAt(1 - _colorTween.EasedElapsedPercentage);
 
-		_handlePosition = GetHandlePosition();
-		_handleTween = new Tween(_handlePosition, _handlePosition, 0.25f);
+		Vector2 handlePosition = GetHandlePosition();
+		_handleTween = new Tween(handlePosition, handlePosition, 0.25f);
 		_handleTween.SetEasing(EasingFunctions.EaseOutCubic);
 	}
 
@@ -97,7 +96,7 @@ public class Slider : MenuElement
 		// Slider handle
 		spriteBatch.Draw(
 			Main.Pixel,
-			_handleTween.Result(),
+			Position + _handleTween.Result(),
 			null,
 			Color.Lerp(NormalColor, SelectedColor, 1 - _colorTween.Result()),
 			0,
@@ -129,7 +128,7 @@ public class Slider : MenuElement
 			Pivot,
 			(Texture.Bounds.Size.ToVector2() * TextureSize) + Padding + Vector2.UnitX * (Gap * 2f + SliderSize.X + valueTextSize.X),
 			SpriteEffects.None,
-			LayerDepth - 0.1f);
+			LayerDepth - 0.01f);
 	}
 
 
@@ -140,17 +139,15 @@ public class Slider : MenuElement
 		return Texture.Bounds.Size.ToVector2() * TextureSize + Padding + Vector2.UnitX * (Gap * 2f + SliderSize.X + valueTextSize.X);
 	}
 
-
-
 	Vector2 GetHandlePosition()
 	{
-		return new Vector2(LerpExtensions.Remap(Min, Max, Position.X - SliderSize.X / 2, Position.X + SliderSize.X / 2, Value), Position.Y);
+		return new Vector2(LerpExtensions.Remap(Min, Max, -SliderSize.X / 2, SliderSize.X / 2, Value), 0);
 	}
 
 	void ValueChanged()
 	{
 		OnValueChanged?.Invoke(Value);
-		_handleTween.SetStart(_handlePosition).SetTarget(_handlePosition = GetHandlePosition()).RestartAt(1 - _handleTween.EasedElapsedPercentage);
+		_handleTween.SetStart(_handleTween.Result()).SetTarget(GetHandlePosition()).Restart();
 	}
 }
 
