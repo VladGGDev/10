@@ -80,7 +80,7 @@ public class Main : Game
 	public const float TargetScreenHeight = 1080;
 	public const float TargetAspectRatio = 16f / 9f;
 	public static readonly Vector2 EntityLayerOffset = new(8, 8);  // Don't forget about this
-	public const bool DebugGraphics = true; // Set to false when releasing
+	public static bool DebugGraphics = true; // Set to false when releasing
 
 
 	public Main()

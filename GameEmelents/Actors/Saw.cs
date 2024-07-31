@@ -26,7 +26,7 @@ internal class Saw : Actor
 	public const float PanningExponent = 3f;
 	public const float SoundRadius = 750f;
 	public const float SoundFalloffExponent = 2f;
-	public const float MaxVolume = 0.7f;
+	public const float MaxVolume = 0.5f;
 
 
 	public const float RotateSpeed = MathF.Tau * 1f;
@@ -54,18 +54,14 @@ internal class Saw : Actor
 			_sequence = new();
 
 			// First
-			_sequence.Add(new Tween(Position, Points[0], Vector2.Distance(Points[0], Position) / Speed[0]));
-			if (WaitTime[0] > 0)
-				_sequence.AddDelay(WaitTime[0]);
+			AddToSequence(Position, Points[0], Speed[0], WaitTime[0]);
 			// The rest
 			for (int i = 1; i < Points.Length; i++)
 			{
 				float speed = Speed.Length == 1 ? Speed[0] : Speed[i];
 				float wait = WaitTime.Length == 1 ? WaitTime[0] : WaitTime[i];
 
-				_sequence.Add(new Tween(Points[i - 1], Points[i], Vector2.Distance(Points[i - 1], Points[i]) / speed));
-				if (wait > 0)
-					_sequence.AddDelay(wait);
+				AddToSequence(Points[i - 1], Points[i], speed, wait);
 			}
 			// Yo-Yo
 			if (!IsYoYo)
@@ -75,17 +71,23 @@ internal class Saw : Actor
 				float speed = Speed.Length == 1 ? Speed[0] : Speed[i];
 				float wait = WaitTime.Length == 1 ? WaitTime[0] : WaitTime[i];
 
-				_sequence.Add(new Tween(Points[i], Points[i - 1], Vector2.Distance(Points[i], Points[i - 1]) / speed));
-				if (wait > 0)
-					_sequence.AddDelay(wait);
+				AddToSequence(Points[i], Points[i - 1], speed, wait);
 			}
 			// Yo-Yo last
-			_sequence.Add(new Tween(Points[0], Position, Vector2.Distance(Points[0], Position) / Speed[0]));
-			if (WaitTime[0] > 0)
-				_sequence.AddDelay(WaitTime[0]);
+			AddToSequence(Points[0], Position, Speed[0], WaitTime[0]);
 
 			_sequence.Restart();
 		}
+	}
+
+	void AddToSequence(Vector2 from, Vector2 to, float speed, float waitTime)
+	{
+		Tween tween = new Tween(from, to, Vector2.Distance(from, to) / speed);
+		if (IsEased)
+			tween.SetEasing(EasingFunctions.EaseInOutCubic);
+		_sequence.Add(tween);
+		if (waitTime > 0)
+			_sequence.AddDelay(waitTime);
 	}
 
 	public override void Update()
@@ -115,7 +117,7 @@ internal class Saw : Actor
 			_texture,
 			Collider.Position,
 			null,
-			new Color(255, 25, 25),
+			new Color(255, 0, 0),
 			Main.TotalTime * RotateSpeed,
 			_texture.Bounds.Center.ToVector2(),
 			Size / _texture.Height,

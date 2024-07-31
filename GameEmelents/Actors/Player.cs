@@ -71,7 +71,7 @@ internal class Player : Actor
 	}
 	public CornerCorrection UpCC = new(1f, 24);
 	public CornerCorrection ForwardCC = new(1f, 16);
-	public float MinCCYVel = -1.5f;
+	public float MinCCYVel = -1f;
 	public float MaxCCYVel = 99f;
 
 

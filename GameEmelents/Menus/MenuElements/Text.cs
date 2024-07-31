@@ -25,7 +25,6 @@ public class Text : MenuElement
 	public override void Draw(SpriteBatch spriteBatch)
 	{
 		Vector2 textSize = Font.MeasureString(String);
-
 		spriteBatch.DrawString(
 			Font,
 			String,
