@@ -55,12 +55,13 @@ public class Countdown : Actor
 			Lose();
 	}
 
-	public override void Draw(SpriteBatch spriteBatch)
+	public override void Draw()
 	{
+		DrawPass pass = DrawPass.Passes["UI"];
 		string text = MathF.Round(MathF.Max(0, Time)).ToString();
-		spriteBatch.DrawString(_font,
+		pass.DrawString(_font,
 			text,
-			Main.WindowCenter,
+			Main.WindowSize / 2f,
 			Color.WhiteSmoke,
 			0f,
 			_font.MeasureString(text) / 2,
@@ -68,7 +69,7 @@ public class Countdown : Actor
 			SpriteEffects.None,
 			0.8f);
 
-		_fade.Draw(spriteBatch);
+		_fade.Draw();
 	}
 
 

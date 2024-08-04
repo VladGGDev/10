@@ -111,9 +111,10 @@ internal class Saw : Actor
 			_sequence.Restart();
 	}
 
-	public override void Draw(SpriteBatch spriteBatch)
+	public override void Draw()
 	{
-		spriteBatch.Draw(
+		DrawPass pass = DrawPass.Passes[""];
+		pass.Draw(
 			_texture,
 			Collider.Position,
 			null,
@@ -125,7 +126,7 @@ internal class Saw : Actor
 			0.2f);
 
 		if (Main.DebugGraphics)
-			spriteBatch.DrawCircleOutline(Collider.Position, Size.X / 2 * ColliderSizeMultiplier, Color.Black);
+			pass.DrawCircleOutline(Collider.Position, Size.X / 2 * ColliderSizeMultiplier, Color.Black);
 	}
 
 	public override void End()

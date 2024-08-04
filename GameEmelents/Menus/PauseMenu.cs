@@ -23,6 +23,7 @@ public class PauseMenu : Menu
 			_isPaused = value;
 			if (value)
 			{
+				CurrentGroup.SelectElement(_playButton);
 				_alphaTween.SetStart(0).SetTarget(1f).Restart();
 				Main.TimeScale = 0;
 			}
@@ -130,8 +131,8 @@ public class PauseMenu : Menu
 			base.Update();
 	}
 
-	public override void Draw(SpriteBatch spriteBatch)
+	public override void Draw()
 	{
-		base.Draw(spriteBatch);
+		base.Draw();
 	}
 }

@@ -24,7 +24,7 @@ public abstract class Actor : ILDtkEntity
 	public abstract void Start(ContentManager content);
 	public virtual void Update() { }
 	public virtual void FixedUpdate() { }
-	public abstract void Draw(SpriteBatch spriteBatch);
+	public abstract void Draw();
 	public virtual void End() { }
 
 

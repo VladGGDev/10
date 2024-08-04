@@ -23,8 +23,8 @@ public class MainMenuScene : Scene
 		_mainMenu.Update();
 	}
 
-	public override void Draw(SpriteBatch spriteBatch, ExampleRenderer levelRenderer)
+	public override void Draw(ExampleRenderer levelRenderer)
 	{
-		_mainMenu.Draw(spriteBatch);
+		_mainMenu.Draw();
 	}
 }

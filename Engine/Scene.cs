@@ -51,14 +51,14 @@ public abstract class Scene
 		HandleActorQueues();
 	}
 
-	public virtual void Draw(SpriteBatch spriteBatch, ExampleRenderer levelRenderer)
+	public virtual void Draw(ExampleRenderer levelRenderer)
 	{
 		// Draw the level
 		if (Level != null)
 			levelRenderer.RenderPrerenderedLevel(Level);
 
 		foreach (var actor in Actors)
-			actor.Draw(spriteBatch);
+			actor.Draw();
 	}
 
 	public virtual void End()

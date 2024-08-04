@@ -2,13 +2,22 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Linq;
 using System.Diagnostics;
 using Microsoft.Xna.Framework.Audio;
+using System.Collections.Generic;
 
 public class Main : Game
 {
 	GraphicsDeviceManager _graphicsSettings;
-	SpriteBatch _spriteDraw;
+	SpriteBatch _levelSpriteBatch;
+	SpriteBatch _UiSpriteBatch;
+	//SpriteBatch _BackgroundSpriteBatch;
+
+	SpriteBatch _renderTargetSpriteBatch;
+	Point _renderTargetPos;
+	RenderTarget2D _renderTarget;
+
 	SceneManager _sceneManager;
 
 	public static Main Instance { get; private set; }
@@ -27,10 +36,9 @@ public class Main : Game
 	public static float SmoothFPS { get; private set; }
 
 	// Screen data
-	Point _renderTargetPos;
-	RenderTarget2D _renderTarget;
 	public static Vector2 WindowCenter { get; private set; }
 	public static Vector2 WindowSize { get; private set; }
+	public static Matrix CameraMatrix { get; private set; }
 
 	static bool _isFullscreen;
 	public static bool IsFullscreen
@@ -92,8 +100,10 @@ public class Main : Game
 
 	protected override void Initialize()
 	{
-		_spriteDraw = new SpriteBatch(GraphicsDevice);
-		_sceneManager = new(Content, _spriteDraw);
+		_renderTargetSpriteBatch = new SpriteBatch(GraphicsDevice);
+		_levelSpriteBatch = new SpriteBatch(GraphicsDevice);
+		_UiSpriteBatch = new SpriteBatch(GraphicsDevice);
+		_sceneManager = new(Content, _levelSpriteBatch);
 		Window.ClientSizeChanged += HandleWindowSizeChange;
 
 		// Create the 1x1 square texture
@@ -113,7 +123,7 @@ public class Main : Game
 		IsFullscreen = false;
 
 
-		// Input actions
+		// ===== Input actions =====
 		// Player
 		Input.CreateAction("Left", Keys.A, Keys.Left);
 		Input.CreateAction("Right", Keys.D, Keys.Right);
@@ -126,11 +136,17 @@ public class Main : Game
 		Input.CreateAction("MenuInteract", Keys.Space, Keys.Enter);
 
 
-		// Scenes
+		// ===== Draw passes =====
+		DrawPass.Passes["Background"] = new DrawPass(new SpriteBatch(GraphicsDevice), 0, new DrawSettings());
+		DrawPass.Passes[""] = new DrawPass(_levelSpriteBatch, 1, new DrawSettings());
+		DrawPass.Passes["UI"] = new DrawPass(_UiSpriteBatch, 2, new DrawSettings());
+
+
+		// ===== Scenes =====
 		_sceneManager.AddScene<MainMenuScene>(null);
 		foreach (var level in _sceneManager.WorldLevels)
 		{
-			_sceneManager.AddScene<GameScene>(level, 10f);
+			_sceneManager.AddScene<GameScene>(level, 10f, null);
 			// TODO: In between each scene add a scene for the number of the level
 		}
 
@@ -232,34 +248,59 @@ public class Main : Game
 		cameraPosition -= blackBarOffset / windowScale;
 
 
-
-		// Drawing to target
-		GraphicsDevice.SetRenderTarget(_renderTarget);
-		GraphicsDevice.Clear(Color.CornflowerBlue);
-
-		_spriteDraw.Begin(
-			samplerState: SamplerState.PointClamp,
-			sortMode: SpriteSortMode.FrontToBack,
-			blendState: BlendState.NonPremultiplied,
-			transformMatrix:
-				Matrix.CreateTranslation(new(cameraPosition, 0)) *
-				Matrix.CreateScale(cameraSize));
-
 		// UI screen data
 		WindowSize = Camera.Instance.Dimensions;
 		WindowCenter = -cameraPosition + WindowSize / 2f;
-		//_spriteDraw.DrawSimlple(Pixel, WindowCenter - (WindowSize / 2f), 0, WindowSize, Color.Gold, 1f); // Fullscreen panel test
+		CameraMatrix = Matrix.CreateTranslation(new(cameraPosition, 0)) * Matrix.CreateScale(cameraSize);
+		//_UiSpriteBatch.DrawSimlple(Pixel, WindowCenter - (WindowSize / 2f), 0, WindowSize, Color.Gold, 1f); // Fullscreen panel test
+		DrawPass.Passes[""].Settings.TransformMatrix = CameraMatrix;
+		//DrawPass.Passes["UI"].Settings.TransformMatrix = CameraMatrix;
+
+
+		// Drawing to render target
+		GraphicsDevice.SetRenderTarget(_renderTarget);
+		GraphicsDevice.Clear(Color.CornflowerBlue);
+
+		var orderedDrawPasses =
+			from pass in DrawPass.Passes.Values
+			orderby pass.Order
+			select pass;
+		
+		foreach (DrawPass pass in orderedDrawPasses)
+		{
+			pass._SpriteBatch.Begin(
+				pass.Settings.SortMode,
+				pass.Settings.BlendState,
+				pass.Settings.SamplerState,
+				pass.Settings.DepthStencilState,
+				pass.Settings.RasterizerState,
+				pass.Settings.Effect,
+				pass.Settings.TransformMatrix);
+		}
 
 		// Drawing the current scene
-		SceneManager.CurrentScene.Draw(_sceneManager.SpriteBatch, _sceneManager.LevelRenderer);
+		SceneManager.CurrentScene.Draw(_sceneManager.LevelRenderer);
+
+		foreach (DrawPass pass in orderedDrawPasses)
+		{
+			pass._SpriteBatch.End();
+		}
+
+
+
+		_UiSpriteBatch.Begin(
+		samplerState: SamplerState.LinearClamp,
+		sortMode: SpriteSortMode.FrontToBack,
+		blendState: BlendState.NonPremultiplied,
+		transformMatrix: CameraMatrix);
 
 		// Debug text
 		string text = DebugMessage;
 		Vector2 textMiddlePoint = _font.MeasureString(text) / 2f;
-		_spriteDraw.DrawString(
+		_UiSpriteBatch.DrawString(
 			_font,
 			text, WindowCenter,
-			Color.Black, 
+			Color.Black,
 			0f,
 			textMiddlePoint,
 			1f,
@@ -269,7 +310,7 @@ public class Main : Game
 		// FPS
 		if (ShowFps)
 		{
-			_spriteDraw.DrawString(
+			_UiSpriteBatch.DrawString(
 				_font,
 				SmoothFPS.ToString("F1"),
 				WindowCenter - WindowSize / 2f,
@@ -279,7 +320,7 @@ public class Main : Game
 				0.5f,
 				SpriteEffects.None,
 				1f);
-			_spriteDraw.DrawString(
+			_UiSpriteBatch.DrawString(
 				_font,
 				SmoothFPS.ToString("F1"),
 				WindowCenter - WindowSize / 2f - new Vector2(2f),
@@ -291,18 +332,18 @@ public class Main : Game
 				0.999f);
 		}
 
-		_spriteDraw.End();
+		_UiSpriteBatch.End();
 
 
 
 		// Drawing target to screen
 		GraphicsDevice.SetRenderTarget(null);
-		_spriteDraw.Begin();
-		_spriteDraw.Draw(
+		_renderTargetSpriteBatch.Begin();
+		_renderTargetSpriteBatch.Draw(
 			_renderTarget,
 			new Rectangle(_renderTargetPos.X, _renderTargetPos.Y, _renderTarget.Width, _renderTarget.Height),
 			Color.White);
-		_spriteDraw.End();
+		_renderTargetSpriteBatch.End();
 
 		base.Draw(gameTime);
 	}

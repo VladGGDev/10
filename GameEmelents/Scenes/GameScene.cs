@@ -10,8 +10,10 @@ public class GameScene : Scene
 	List<BoxCollider> _levelColliders = new List<BoxCollider>();
 	PauseMenu _pauseMenu = new();
 
-	public GameScene(LDtkLevel level, float time) : base(level)
+	public GameScene(LDtkLevel level, float time, Effect backgroundEffect) : base(level)
 	{
+		DrawPass.Passes["Background"].Settings.Effect = backgroundEffect;
+
 		Player player = Level.GetEntity<Player>();
 		Camera = new(player.Position, Main.TargetScreenHeight * 1f, new(Level.Position, Level.Size - new Point(0, 8)));
 		
@@ -78,14 +80,15 @@ public class GameScene : Scene
 		base.Update();
 	}
 
-	public override void Draw(SpriteBatch spriteBatch, ExampleRenderer levelRenderer)
+	public override void Draw(ExampleRenderer levelRenderer)
 	{
-		_pauseMenu.Draw(spriteBatch);
-		base.Draw(spriteBatch, levelRenderer);
+		_pauseMenu.Draw();
+		base.Draw(levelRenderer);
 
 		// Debug draw the colliders
 		if (!Main.DebugGraphics)
 			return;
+		DrawPass pass = DrawPass.Passes[""];
 		foreach (var col in _levelColliders)
 		{
 			Color c = col.Tag switch
@@ -95,8 +98,7 @@ public class GameScene : Scene
 				_ => Color.Pink,
 			};
 			//c.A = 64;
-			//spriteBatch.Draw(Main.Pixel, col.Position, null, c, 0, Vector2.One / 2f, col.Size, SpriteEffects.None, 0.05f);
-			spriteBatch.DrawSquareOutline(col.Position, col.Size, c);
+			pass.DrawSquareOutline(col.Position, col.Size, c);
 		}
 	}
 }

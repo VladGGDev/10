@@ -63,6 +63,9 @@ public static class SpriteBatchExtensions
 			1f);
 	}
 
+	public static void DrawCircleOutline(this SpriteBatch spriteBatch, Point position, float radius, Color color)
+		=> DrawCircleOutline(spriteBatch, position.ToVector2(), radius, color);
+
 	public static void DrawCircleOutline(this SpriteBatch spriteBatch, Vector2 position, float radius, Color color)
 	{
 		float resolution = MathF.Tau * radius; // length of circumference = 2*PI*R
@@ -85,7 +88,7 @@ public static class SpriteBatchExtensions
 		}
 	}
 
-	public static void DrawSimlple(this SpriteBatch spriteBatch, Texture2D texture, Vector2 position, float rotation, Vector2 Size, Color color, float depth)
+	public static void DrawSimlple(this SpriteBatch spriteBatch, Texture2D texture, Vector2 position, float rotation, Vector2 size, Color color, float layerDepth)
 	{
 		spriteBatch.Draw(
 			texture,
@@ -94,9 +97,9 @@ public static class SpriteBatchExtensions
 			color,
 			rotation,
 			texture.Bounds.Center.ToVector2(),
-			Size,
+			size,
 			SpriteEffects.None,
-			depth);
+			layerDepth);
 	}
 }
 

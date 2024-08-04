@@ -18,8 +18,8 @@ public abstract class Menu
 		CurrentGroup.Update();
 	}
 
-	public virtual void Draw(SpriteBatch spriteBatch)
+	public virtual void Draw()
 	{
-		CurrentGroup.Draw(spriteBatch);
+		CurrentGroup.Draw();
 	}
 }

@@ -29,9 +29,10 @@ internal class Coin : Actor
 		Collider.Position = Position + _offset;
 	}
 
-	public override void Draw(SpriteBatch spriteBatch)
+	public override void Draw()
 	{
-		spriteBatch.Draw(
+		DrawPass pass = DrawPass.Passes[""];
+		pass.Draw(
 			Main.Pixel, 
 			Position + _offset, 
 			null, 
@@ -43,7 +44,7 @@ internal class Coin : Actor
 			0);
 		
 		if (Main.DebugGraphics)
-			spriteBatch.DrawCircleOutline(Collider.Position, Size.X / 2f, Color.DarkOrange);
+			pass.DrawCircleOutline(Collider.Position, Size.X / 2f, Color.DarkOrange);
 	}
 
 	public override void End()

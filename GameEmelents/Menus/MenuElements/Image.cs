@@ -21,9 +21,10 @@ public class Image : MenuElement
 		OnSelected = () => throw new Exception("Images cannot be selectable.");
 	}
 
-	public override void Draw(SpriteBatch spriteBatch)
+	public override void Draw()
 	{
-		spriteBatch.Draw(
+		DrawPass pass = DrawPass.Passes["UI"];
+		pass.Draw(
 			Texture,
 			Position,
 			null,
@@ -34,7 +35,7 @@ public class Image : MenuElement
 			SpriteEffects.None,
 			LayerDepth);
 
-		spriteBatch.Draw(
+		pass.Draw(
 			Main.Pixel,
 			Position,
 			null,

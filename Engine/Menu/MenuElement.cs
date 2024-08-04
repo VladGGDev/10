@@ -8,8 +8,8 @@ namespace Menus;
 public abstract class MenuElement
 {
 	public bool IsSelected { get; set; } = false;
-	public Action OnSelected { get; set; } = () => { };
-	public Action OnDeselected { get; set; } = () => { };
+	public Action OnSelected { get; set; }
+	public Action OnDeselected { get; set; }
 
 	public Vector2 Size { get; set; } = Vector2.One;
 	float _layerDepth = 0.91f;
@@ -39,7 +39,7 @@ public abstract class MenuElement
 				MenuPivot.DownRight => half,
 				MenuPivot.DownLeft => new Vector2(-half.X, half.Y),
 				_ => Vector2.Zero
-			} + Main.WindowCenter + Offset;
+			} + half + Offset;
 		}
 	}
 	public Vector2 Pivot => ScreenPivot switch
@@ -59,7 +59,7 @@ public abstract class MenuElement
 
 	public abstract void Start(ContentManager content);
 	public virtual void Update() { }
-	public abstract void Draw(SpriteBatch spriteBatch);
+	public abstract void Draw();
 }
 
 public enum MenuPivot

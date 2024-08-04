@@ -68,12 +68,13 @@ public class Fade : MenuElement
 		}
 	}
 
-	public override void Draw(SpriteBatch spriteBatch)
+	public override void Draw()
 	{
+		DrawPass pass = DrawPass.Passes["UI"];
 		Color col = new Color(Color, _alpha);
-		spriteBatch.Draw(
+		pass.Draw(
 			Main.Pixel,
-			Main.WindowCenter,
+			Main.WindowSize / 2f,
 			null,
 			col,
 			0,

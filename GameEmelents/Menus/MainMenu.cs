@@ -166,9 +166,9 @@ public class MainMenu : Menu
 		base.Update();
 	}
 
-	public override void Draw(SpriteBatch spriteBatch)
+	public override void Draw()
 	{
-		_fade.Draw(spriteBatch);
-		base.Draw(spriteBatch);
+		_fade.Draw();
+		base.Draw();
 	}
 }

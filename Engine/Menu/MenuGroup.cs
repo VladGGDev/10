@@ -124,10 +124,10 @@ public class MenuGroup
 			element.Update();
 	}
 
-	public void Draw(SpriteBatch spriteBatch)
+	public void Draw()
 	{
 		foreach (var element in _graph.Keys)
-			element.Draw(spriteBatch);
+			element.Draw();
 	}
 
 
@@ -151,9 +151,18 @@ public class MenuGroup
 		if (SelectedElement != prev)
 		{
 			prev.IsSelected = false;
-			prev.OnDeselected();
+			prev.OnDeselected?.Invoke();
 			SelectedElement.IsSelected = true;
-			SelectedElement.OnSelected();
+			SelectedElement.OnSelected?.Invoke();
 		}
+	}
+
+	public void SelectElement(MenuElement element)
+	{
+		SelectedElement.IsSelected = false;
+		SelectedElement.OnDeselected?.Invoke();
+		SelectedElement = element;
+		SelectedElement.IsSelected = true;
+		SelectedElement.OnSelected?.Invoke();
 	}
 }

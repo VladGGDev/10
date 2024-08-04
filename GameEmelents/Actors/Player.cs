@@ -275,9 +275,10 @@ internal class Player : Actor
 		}
 	}
 
-	public override void Draw(SpriteBatch spriteBatch)
+	public override void Draw()
 	{
-		spriteBatch.Draw(
+		DrawPass pass = DrawPass.Passes[""];
+		pass.Draw(
 			Main.Pixel, 
 			Collider.Position + Vector2.UnitY * (Size.Y / 2f - _colliderSizeDiff.Y / 2f),// - Vector2.UnitY * (_colliderSizeDif.Y / 2 + (Size.Y - Size.Y * _sizeMultiplier.Y) / -2), 
 			null, 
@@ -289,7 +290,7 @@ internal class Player : Actor
 			0.1f);
 
 		if (Main.DebugGraphics)
-			spriteBatch.DrawSquareOutline(Collider.Position, Size - _colliderSizeDiff, Color.DarkBlue);
+			pass.DrawSquareOutline(Collider.Position, Size - _colliderSizeDiff, Color.DarkBlue);
 	}
 
 

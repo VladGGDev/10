@@ -63,14 +63,15 @@ public class Slider : MenuElement
 		}
 	}
 
-	public override void Draw(SpriteBatch spriteBatch)
+	public override void Draw()
 	{
+		DrawPass pass = DrawPass.Passes["UI"];
 		string valueText = MathF.Round(Value, Decimals).ToString($"F{Decimals}");
 		Vector2 valueTextSize = Font.MeasureString(valueText);
 
 		// Texture
 		Vector2 texturePosition = Position - Vector2.UnitX * (Gap + SliderSize.X  / 2f + Texture.Width * TextureSize.X / 2f);
-		spriteBatch.Draw(
+		pass.Draw(
 			Texture,
 			texturePosition,
 			null,
@@ -82,7 +83,7 @@ public class Slider : MenuElement
 			LayerDepth);
 
 		// Slider
-		spriteBatch.Draw(
+		pass.Draw(
 			Main.Pixel,
 			Position,
 			null,
@@ -94,7 +95,7 @@ public class Slider : MenuElement
 			LayerDepth);
 
 		// Slider handle
-		spriteBatch.Draw(
+		pass.Draw(
 			Main.Pixel,
 			Position + _handleTween.Result(),
 			null,
@@ -107,7 +108,7 @@ public class Slider : MenuElement
 
 		// Value
 		Vector2 valueTextPosition = Position + Gap * Vector2.UnitX + SliderSize.X * Vector2.UnitX / 2f + Vector2.UnitX * valueTextSize.X / 2f;
-		spriteBatch.DrawString(
+		pass.DrawString(
 			Font,
 			valueText,
 			valueTextPosition,
@@ -119,7 +120,7 @@ public class Slider : MenuElement
 			LayerDepth);
 
 		// Background
-		spriteBatch.Draw(
+		pass.Draw(
 			Main.Pixel,
 			(texturePosition + valueTextPosition + Vector2.UnitX * (-(Texture.Width * TextureSize.X) / 2f + valueTextSize.X / 2f)) / 2f,
 			null,

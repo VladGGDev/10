@@ -22,10 +22,11 @@ public class Text : MenuElement
 		OnSelected = () => throw new Exception("Text cannot be selectable.");
 	}
 
-	public override void Draw(SpriteBatch spriteBatch)
+	public override void Draw()
 	{
+		DrawPass pass = DrawPass.Passes["UI"];
 		Vector2 textSize = Font.MeasureString(String);
-		spriteBatch.DrawString(
+		pass.DrawString(
 			Font,
 			String,
 			Position,
@@ -36,7 +37,7 @@ public class Text : MenuElement
 			SpriteEffects.None,
 			LayerDepth);
 
-		spriteBatch.Draw(
+		pass.Draw(
 			Main.Pixel,
 			Position,
 			null,
