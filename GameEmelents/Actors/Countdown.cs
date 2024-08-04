@@ -42,7 +42,7 @@ public class Countdown : Actor
 	public override void Update()
 	{
 		_fade.Update();
-		if (!_started)
+		if (!_started && Main.TimeScale != 0)
 		{
 			if (Input.GetActionDown("Left") || Input.GetActionDown("Right") || Input.GetActionDown("Jump"))
 				_started = true;

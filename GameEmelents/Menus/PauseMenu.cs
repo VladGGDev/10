@@ -23,18 +23,17 @@ public class PauseMenu : Menu
 			_isPaused = value;
 			if (value)
 			{
-				CurrentGroup.SelectElement(_playButton);
 				_alphaTween.SetStart(0).SetTarget(1f).Restart();
 				Main.TimeScale = 0;
 			}
 			else
 			{
 				_alphaTween.SetStart(1f).SetTarget(0).Restart();
-				_ = new Timeout(1, () => Main.TimeScale = 1);
+				_ = new Timeout(1, () => Main.TimeScale = 1); // So the player doesn't jump when resuming
 			}
 		}
 	}
-	FloatTween _alphaTween = new(0.15f) { UseUnscaledTime = true };
+	FloatTween _alphaTween = new(0.125f) { UseUnscaledTime = true };
 
 	const float backgroundAlpha = 0.5f;
 	const float buttonDistance = 200f;
@@ -125,7 +124,12 @@ public class PauseMenu : Menu
 		_retryButton.SelectedColor = new(_retryButton.SelectedColor, _alphaTween.Result());
 
 		if (Input.GetKeyDown(Keys.Escape))
+		{
 			IsPaused = !IsPaused;
+
+			if (!IsPaused)
+				CurrentGroup.SelectElement(_playButton);
+		}
 
 		if (IsPaused)
 			base.Update();
