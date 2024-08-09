@@ -32,6 +32,8 @@ public class TweenSequence
 		float t;
 		int i;
 		for (i = 0, t = EasedElapsedPercentage; i < _tweens.Count && t > _tweens[i].Duration / TotalDuration; t -= _tweens[i].Duration / TotalDuration, i++) ;
+		if (i >= _tweens.Count)
+			return _tweens[^1].Target; // Catch extremely rare error
 		Tween tw = _tweens[i];
 		return Vector2.Lerp(tw.Start, tw.Target, tw.Easing(t / tw.Duration * TotalDuration));
 	}

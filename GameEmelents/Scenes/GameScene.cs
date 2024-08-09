@@ -58,19 +58,19 @@ public class GameScene : Scene
 		Vector2 levelSize = Level.Size.ToVector2();
 		_levelColliders.Add(new(
 			levelPos + new Vector2(-Main.UnitSize / 2f, levelSize.Y / 2f),
-			new Vector2(Main.UnitSize,  levelSize.Y),
+			new Vector2(Main.UnitSize, levelSize.Y + Main.UnitSize * 20f),
 			"Level")); // Left
 		_levelColliders.Add(new(
 			levelPos + new Vector2(levelSize.X + Main.UnitSize / 2f, levelSize.Y / 2f),
-			new Vector2(Main.UnitSize, levelSize.Y),
+			new Vector2(Main.UnitSize, levelSize.Y + Main.UnitSize * 20f),
 			"Level")); // Right
+		//_levelColliders.Add(new(
+		//	levelPos + new Vector2(levelSize.X / 2f, -Main.UnitSize / 2f),
+		//	new Vector2(levelSize.X, Main.UnitSize),
+		//	"Level")); // Up
 		_levelColliders.Add(new(
-			levelPos + new Vector2(levelSize.X / 2f, -Main.UnitSize / 2f),
-			new Vector2(levelSize.X, Main.UnitSize),
-			"Level")); // Up
-		_levelColliders.Add(new(
-			levelPos + new Vector2(levelSize.X / 2f, levelSize.Y + Main.UnitSize / 2f),
-			new Vector2(levelSize.X, Main.UnitSize),
+			levelPos + new Vector2(levelSize.X / 2f, levelSize.Y + Main.UnitSize / 2f + Main.UnitSize * 4),
+			new Vector2(levelSize.X + Main.UnitSize * 10f, Main.UnitSize),
 			"Spike")); // Down
 	}
 

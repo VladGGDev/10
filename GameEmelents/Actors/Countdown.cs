@@ -62,7 +62,7 @@ public class Countdown : Actor
 		pass.DrawString(_font,
 			text,
 			Main.WindowSize / 2f,
-			Color.WhiteSmoke,
+			new(Color.WhiteSmoke, 0.5f),
 			0f,
 			_font.MeasureString(text) / 2,
 			1f,

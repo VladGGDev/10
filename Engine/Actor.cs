@@ -8,12 +8,11 @@ public abstract class Actor : ILDtkEntity
 {
 	public Collider Collider { get; set; }
 
+	// LDtk
 	public Vector2 Position { get; set; }
 	public Vector2 Size { get; set; }
 	public Vector2 Pivot { get; set; }
 
-
-	// LDtk
 	public string Identifier { get; set; }
 	public Guid Iid { get; set; }
 	public int Uid { get; set; }

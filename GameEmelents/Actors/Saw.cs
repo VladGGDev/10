@@ -93,7 +93,7 @@ internal class Saw : Actor
 	public override void Update()
 	{
 		// Sounds
-		float pan = Vector2.Normalize(Collider.Position - Camera.Instance.Position).X;
+		float pan = Vector2.Normalize(Collider.Position - _player.Collider.Position).X;
 		_soundEffect.Pan = MathF.Pow(pan, PanningExponent);
 		float volume = Math.Clamp(1f - Vector2.Distance(Collider.ClosestPointOnBounds(_player.Collider.Position), _player.Collider.Position) / SoundRadius, 0, 1f);
 		volume = MathF.Pow(volume, SoundFalloffExponent);

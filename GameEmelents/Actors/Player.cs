@@ -13,7 +13,7 @@ internal class Player : Actor
 	// JUMP DISTANCE: 16 units
 
 	// Various
-	public Vector2 Velocity = new Vector2();
+	public Vector2 Velocity = new();
 	Countdown _countdown;
 
 	Vector2 _colliderSizeDiff = new(4, 4);
