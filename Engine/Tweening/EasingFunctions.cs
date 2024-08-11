@@ -2,6 +2,7 @@
 
 namespace Tweening;
 
+// All easing functions that are properties were taken from https://easings.net/
 public struct EasingFunctions
 {
 	const float c1 = 1.70158f;
@@ -133,4 +134,16 @@ public struct EasingFunctions
 		x => x < 0.5f
 			? (1 - EaseOutBounce(1 - 2 * x)) / 2
 			: (1 + EaseOutBounce(2 * x - 1)) / 2;
+
+	public static Func<float, float> LinearYoYo(float fadeInP = 0.5f, float fadeOutP = 0.5f)
+		=> x =>
+			{
+				float stayP = 1 - fadeInP - fadeOutP;
+				if (x <= fadeInP)
+					return x / fadeInP;
+				else if (x >= fadeInP + stayP)
+					return 1 - (x - fadeInP - stayP) / fadeOutP;
+				else
+					return 1;
+			};
 }

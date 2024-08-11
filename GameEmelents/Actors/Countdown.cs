@@ -78,6 +78,7 @@ public class Countdown : Actor
 		if (_won)
 			return;
 		_lost = true;
+		Main.TimeScale = 0;
 		CanPlayerSimulate = false;
 		_ = new Timeout(250f, () =>
 		{
@@ -94,6 +95,7 @@ public class Countdown : Actor
 	public void NextLevel()
 	{
 		_won = true;
+		Main.TimeScale = 0;
 		CanPlayerMove = false;
 		CanPlayerSimulate = false;
 		_ = new Timeout(1000f - _fade.FadeInTime * 1000, () =>

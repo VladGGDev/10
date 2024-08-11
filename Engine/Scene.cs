@@ -54,8 +54,7 @@ public abstract class Scene
 	public virtual void Draw(ExampleRenderer levelRenderer)
 	{
 		// Draw the level
-		if (Level != null)
-			levelRenderer.RenderPrerenderedLevel(Level);
+		levelRenderer?.RenderPrerenderedLevel(Level);
 
 		foreach (var actor in Actors)
 			actor.Draw();

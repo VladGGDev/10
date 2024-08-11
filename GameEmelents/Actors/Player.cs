@@ -9,7 +9,7 @@ using System.Diagnostics;
 internal class Player : Actor
 {
 	// UNIT SIZE: 32
-	// JUMP HEIGHT: 6 units
+	// JUMP HEIGHT: 6.15 units
 	// JUMP DISTANCE: 16 units
 
 	// Various
@@ -42,7 +42,7 @@ internal class Player : Actor
 	public float FallingGravity = 2100f;
 	public float MaxFallSpeed = 8f;
 
-	public float JumpHeight = Main.UnitSize * 6f;
+	public float JumpHeight = Main.UnitSize * 6.15f;
 	public float JumpForce => MathF.Sqrt(2f * Gravity * JumpHeight);
 	public float JumpCancelMultiplier = 0.5f;
 
@@ -98,7 +98,7 @@ internal class Player : Actor
 	public override void Start(ContentManager content)
 	{
 		AddCollider(new BoxCollider(
-			Position - Size * Pivot * 0.5f + new Vector2(0, _colliderSizeDiff.Y * 0.5f),
+			Position - new Vector2(0, Size.Y / 2f) + new Vector2(0, _colliderSizeDiff.Y * 0.5f),
 			Size - _colliderSizeDiff,
 			"Player"));
 

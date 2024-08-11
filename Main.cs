@@ -39,6 +39,7 @@ public class Main : Game
 	public static Vector2 WindowCenter { get; private set; }
 	public static Vector2 WindowSize { get; private set; }
 	public static Matrix CameraMatrix { get; private set; }
+	public static Matrix CameraScaleMatrix { get; private set; }
 
 	static bool _isFullscreen;
 	public static bool IsFullscreen
@@ -88,7 +89,7 @@ public class Main : Game
 	public const float TargetScreenHeight = 1080;
 	public const float TargetAspectRatio = 16f / 9f;
 	public static readonly Vector2 EntityLayerOffset = new(8, 8);  // Don't forget about this
-	public static bool DebugGraphics = true; // Set to false when releasing
+	public static bool DebugGraphics = false; // Set to false when releasing
 
 
 	public Main()
@@ -100,6 +101,8 @@ public class Main : Game
 
 	protected override void Initialize()
 	{
+		base.Initialize(); // LoadContent() is called in base
+
 		_renderTargetSpriteBatch = new SpriteBatch(GraphicsDevice);
 		_levelSpriteBatch = new SpriteBatch(GraphicsDevice);
 		_UiSpriteBatch = new SpriteBatch(GraphicsDevice);
@@ -154,7 +157,7 @@ public class Main : Game
 		_sceneManager._HandleQueuedScene();
 
 
-		base.Initialize();
+		
 	}
 
 	protected override void BeginRun()
@@ -252,9 +255,10 @@ public class Main : Game
 		WindowSize = Camera.Instance.Dimensions;
 		WindowCenter = -cameraPosition + WindowSize / 2f;
 		CameraMatrix = Matrix.CreateTranslation(new(cameraPosition, 0)) * Matrix.CreateScale(cameraSize);
+		CameraScaleMatrix = Matrix.CreateScale(cameraSize);
 		//_UiSpriteBatch.DrawSimlple(Pixel, WindowCenter - (WindowSize / 2f), 0, WindowSize, Color.Gold, 1f); // Fullscreen panel test
 		DrawPass.Passes[""].Settings.TransformMatrix = CameraMatrix;
-		//DrawPass.Passes["UI"].Settings.TransformMatrix = CameraMatrix;
+		DrawPass.Passes["UI"].Settings.TransformMatrix = CameraScaleMatrix;
 
 
 		// Drawing to render target

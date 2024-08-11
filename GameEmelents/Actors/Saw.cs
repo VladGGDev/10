@@ -118,7 +118,7 @@ internal class Saw : Actor
 			_texture,
 			Collider.Position,
 			null,
-			new Color(255, 0, 0),
+			Color.White,
 			Main.TotalTime * RotateSpeed,
 			_texture.Bounds.Center.ToVector2(),
 			Size / _texture.Height,

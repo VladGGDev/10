@@ -6,7 +6,7 @@ public struct DrawSettings
 {
 	public SpriteSortMode SortMode { get; set; } = SpriteSortMode.FrontToBack;
 	public BlendState BlendState { get; set; } = BlendState.NonPremultiplied;
-	public SamplerState SamplerState { get; set; } = SamplerState.LinearClamp;
+	public SamplerState SamplerState { get; set; } = SamplerState.PointClamp;
 	public DepthStencilState DepthStencilState { get; set; } = null;
 	public RasterizerState RasterizerState { get; set; } = null;
 	public Effect Effect { get; set; } = null;
