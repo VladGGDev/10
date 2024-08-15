@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Content;
 using System;
 using Menus.MenuElements;
 using System.Diagnostics;
+using Tweening;
 
 public class Countdown : Actor
 {
@@ -16,6 +17,15 @@ public class Countdown : Actor
 
 	public float StartTime { get; set; }
 	public float Time { get; set; }
+	
+	// Juice
+	int _nextSecond;
+	const float _maxAlpha = 0.5f;
+	const float _tweenScaleMult = 0.025f;
+	FloatTween _tweenScale = new() { UseUnscaledTime = true };
+	FloatTween _tweenAlpha = new() { UseUnscaledTime = true };
+	bool _lostBcTimer = false;
+
 	bool _started = false;
 	bool _won = false;
 	bool _lost = false;
@@ -36,7 +46,15 @@ public class Countdown : Actor
 	{
 		_font = content.Load<SpriteFont>("Fonts/Roboto-Light-Big");
 		_player = SceneManager.CurrentScene.GetActor<Player>();
+
+
 		SceneManager.CurrentScene.FirstUpdate += (o, e) => FadeFromBlack();
+
+		_nextSecond = (int)Time;
+		_tweenScale.SetStart(0).SetTarget(1f).SetDuration(0.5f).SetEasing(EasingFunctions.YoYo(3));
+		_tweenAlpha.SetStart(0).SetTarget(_maxAlpha).SetDuration(0.5f).SetEasing(EasingFunctions.YoYo(3));
+		_tweenScale.RestartAt(1f);
+		_tweenAlpha.RestartAt(1f);
 	}
 
 	public override void Update()
@@ -49,23 +67,37 @@ public class Countdown : Actor
 			else
 				return;
 		}
+
 		if (!_won && !_lost)
 			Time -= Main.DeltaTime;
+
+		if (Time < _nextSecond)
+		{
+			_nextSecond--;
+			_tweenScale.Restart();
+			_tweenAlpha.Restart();
+		}
+
 		if (Time <= 0 && !_lost)
+		{
+			_lostBcTimer = true;
+			_tweenAlpha.SetDuration(_tweenAlpha.Duration * 2f).SetEasing(EasingFunctions.YoYo(5));
+			_tweenScale.SetDuration(_tweenScale.Duration * 2f).SetEasing(EasingFunctions.YoYo(5));
 			Lose();
+		}
 	}
 
 	public override void Draw()
 	{
 		DrawPass pass = DrawPass.Passes["UI"];
-		string text = MathF.Round(MathF.Max(0, Time)).ToString();
+		string text = MathF.Floor(MathF.Max(0, Time + 1)).ToString();
 		pass.DrawString(_font,
 			text,
 			Main.WindowSize / 2f,
-			new(Color.WhiteSmoke, 0.5f),
-			0f,
-			_font.MeasureString(text) / 2,
-			1f,
+			new(Color.WhiteSmoke, _tweenAlpha.Result()),
+			0,
+			_font.MeasureString(text) / 2 - new Vector2(64f, 0),
+			1f + _tweenScale.Result() * _tweenScaleMult,
 			SpriteEffects.None,
 			0.8f);
 
@@ -80,7 +112,7 @@ public class Countdown : Actor
 		_lost = true;
 		Main.TimeScale = 0;
 		CanPlayerSimulate = false;
-		_ = new Timeout(250f, () =>
+		_ = new Timeout(_lostBcTimer ? 1000f : 250f, () =>
 		{
 			SceneManager.CurrentScene.RemoveActor(_player);
 			_fade.OnFaded = () => SceneManager.ChangeScene(SceneManager.CurrentSceneIndex);

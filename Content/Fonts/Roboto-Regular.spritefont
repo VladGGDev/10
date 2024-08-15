@@ -11,13 +11,13 @@ with.
 		<!--
     Modify this string to change the font that will be imported.
     -->
-		<FontName>Roboto-Light</FontName>
+		<FontName>Roboto-Regular</FontName>
 
 		<!--
     Size is a float value, measured in points. Modify this value to change
     the size of the font.
     -->
-		<Size>64</Size>
+		<Size>1024</Size>
 
 		<!--
     Spacing is a float value, measured in pixels. Modify this value to change
@@ -53,7 +53,15 @@ with.
 		<CharacterRegions>
 			<CharacterRegion>
 				<Start>&#32;</Start>
-				<End>&#126;</End>
+				<End>&#32;</End>
+			</CharacterRegion>
+			<CharacterRegion>
+				<Start>&#45;</Start>
+				<End>&#46;</End>
+			</CharacterRegion>
+			<CharacterRegion>
+				<Start>&#48;</Start>
+				<End>&#57;</End>
 			</CharacterRegion>
 		</CharacterRegions>
 	</Asset>

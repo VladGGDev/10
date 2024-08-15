@@ -66,7 +66,7 @@ public class MainMenu : Menu
 		};
 		Text gameTitle = new()
 		{
-			Font = content.Load<SpriteFont>("Fonts/Roboto-Light-Big"),
+			Font = content.Load<SpriteFont>("Fonts/Rubik-Regular"),
 			String = "10",
 			Offset = new(0, -300f),
 			Size = new(0.25f)

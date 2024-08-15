@@ -135,6 +135,10 @@ public struct EasingFunctions
 			? (1 - EaseOutBounce(1 - 2 * x)) / 2
 			: (1 + EaseOutBounce(2 * x - 1)) / 2;
 
+	public static Func<float, float> YoYo(float exponent)
+		=> x => 1 - MathF.Pow(MathF.Abs((x - 0.5f) * 2f), exponent);
+	public static readonly Func<float, float> QuadYoYo = x => 1 - MathF.Pow((x - 0.5f) * 2f, 2);
+	public static readonly Func<float, float> CubicYoYo = x => 1 - MathF.Abs(MathF.Pow((x - 0.5f) * 2f, 3));
 	public static Func<float, float> LinearYoYo(float fadeInP = 0.5f, float fadeOutP = 0.5f)
 		=> x =>
 			{

@@ -33,6 +33,36 @@
 #begin Fonts/Roboto-Light.ttf
 /copy:Fonts/Roboto-Light.ttf
 
+#begin Fonts/Roboto-Regular.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Roboto-Regular.spritefont
+
+#begin Fonts/Roboto-Regular.ttf
+/copy:Fonts/Roboto-Regular.ttf
+
+#begin Fonts/Rubik-Medium.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Rubik-Medium.spritefont
+
+#begin Fonts/Rubik-Medium.ttf
+/copy:Fonts/Rubik-Medium.ttf
+
+#begin Fonts/Rubik-Regular.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Rubik-Regular.spritefont
+
+#begin Fonts/Rubik-Regular.ttf
+/copy:Fonts/Rubik-Regular.ttf
+
 #begin Icons/Back.png
 /importer:TextureImporter
 /processor:TextureProcessor

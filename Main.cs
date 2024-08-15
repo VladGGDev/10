@@ -6,6 +6,7 @@ using System.Linq;
 using System.Diagnostics;
 using Microsoft.Xna.Framework.Audio;
 using System.Collections.Generic;
+using Tweening;
 
 public class Main : Game
 {
@@ -92,6 +93,7 @@ public class Main : Game
 	public static bool DebugGraphics = false; // Set to false when releasing
 
 
+
 	public Main()
 	{
 		Instance = this;
@@ -143,6 +145,7 @@ public class Main : Game
 		DrawPass.Passes["Background"] = new DrawPass(new SpriteBatch(GraphicsDevice), 0, new DrawSettings());
 		DrawPass.Passes[""] = new DrawPass(_levelSpriteBatch, 1, new DrawSettings());
 		DrawPass.Passes["UI"] = new DrawPass(_UiSpriteBatch, 2, new DrawSettings());
+		//DrawPass.Passes["Final"] = new DrawPass(_renderTargetSpriteBatch, 999, new DrawSettings());
 
 
 		// ===== Scenes =====
@@ -215,7 +218,7 @@ public class Main : Game
 			SceneManager.ChangeScene(SceneManager.CurrentSceneIndex - 1);
 		if (Input.GetMouseButtonDown(1))
 			SceneManager.ChangeScene(SceneManager.CurrentSceneIndex + 1);
-			//SceneManager.ChangeScene(1);
+		//SceneManager.ChangeScene(1);
 
 		if (Input.GetKeyDown(Keys.Q))
 			CanDraw = !CanDraw;
