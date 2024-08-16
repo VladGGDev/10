@@ -44,7 +44,7 @@ public class Countdown : Actor
 
 	public override void Start(ContentManager content)
 	{
-		_font = content.Load<SpriteFont>("Fonts/Roboto-Light-Big");
+		_font = content.Load<SpriteFont>("Fonts/Roboto-Medium");
 		_player = SceneManager.CurrentScene.GetActor<Player>();
 
 
@@ -60,9 +60,9 @@ public class Countdown : Actor
 	public override void Update()
 	{
 		_fade.Update();
-		if (!_started && Main.TimeScale != 0)
+		if (!_started)
 		{
-			if (Input.GetActionDown("Left") || Input.GetActionDown("Right") || Input.GetActionDown("Jump"))
+			if (Main.TimeScale != 0 && (Input.GetActionDown("Left") || Input.GetActionDown("Right") || Input.GetActionDown("Jump")))
 				_started = true;
 			else
 				return;

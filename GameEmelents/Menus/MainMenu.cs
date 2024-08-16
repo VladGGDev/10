@@ -23,7 +23,7 @@ public class MainMenu : Menu
 	{
 		// ===== Main Menu =====
 		const float buttonDistance = 512f;
-		const float buttonY = 150f;
+		const float buttonY = 250f;
 		const float bigButtonSize = 0.7f;
 		const float buttonSize = 0.6f;
 
@@ -66,10 +66,10 @@ public class MainMenu : Menu
 		};
 		Text gameTitle = new()
 		{
-			Font = content.Load<SpriteFont>("Fonts/Rubik-Regular"),
+			Font = content.Load<SpriteFont>("Fonts/Roboto-Medium"),
 			String = "10",
-			Offset = new(0, -300f),
-			Size = new(0.25f)
+			Offset = new(0, -250f),
+			Size = new(0.45f)
 		};
 		_background = new()
 		{
@@ -98,7 +98,7 @@ public class MainMenu : Menu
 		Slider soundSlider = new()
 		{
 			Texture = content.Load<Texture2D>("Icons/Sound"),
-			Font = content.Load<SpriteFont>("Fonts/Roboto-Light"),
+			Font = content.Load<SpriteFont>("Fonts/Roboto-Regular"),
 			Offset = new(7, settingsStartY + settingsButtonDistance),
 			Size = new(settingsButtonSize),
 
