@@ -6,31 +6,29 @@ namespace Tweening;
 
 public abstract class TweenBase<T>
 {
-	float _startTime = 0;
+	protected float StartTime { get; set; } = 0;
 
 	public bool UseUnscaledTime = false;
-	float Time => UseUnscaledTime ? Main.UnscaledTotalTime : Main.TotalTime;
+	protected float Time => UseUnscaledTime ? Main.UnscaledTotalTime : Main.TotalTime;
 
-	public float Duration { get; private set; }
-	public float ElapsedTime => Time - _startTime;
-	public float ElapsedPercentage => Duration == 0 ? 1 : Math.Clamp(ElapsedTime / Duration, 0, 1f);
+	public float Duration { get; protected set; }
+	public float ElapsedTime => Time - StartTime;
+	public float ElapsedPercentage => Duration <= 0 ? 1 : Math.Clamp(ElapsedTime / Duration, 0, 1f);
 	public float EasedElapsedPercentage => Easing(ElapsedPercentage);
 	public bool IsRunning => ElapsedTime <= Duration;
 
-	public Func<float, float> Easing { get; private set; } = EasingFunctions.Linear;
+	public Func<float, float> Easing { get; protected set; } = EasingFunctions.Linear;
 
-	public T Start { get; private set; }
-	public T Target { get; private set; }
+	public T Start { get; protected set; }
+	public T Target { get; protected set; }
 
 	public TweenBase()
 	{
-		_startTime = Time;
+		StartTime = Time;
 	}
 
 	public TweenBase(float duration) : this()
 	{
-		if (duration <= 0)
-			throw new ArgumentException(nameof(duration) + " cannot be less than or equal to 0", nameof(duration));
 		Duration = duration;
 	}
 
@@ -48,14 +46,25 @@ public abstract class TweenBase<T>
 
 
 
+	protected abstract T Lerp(T start, T target, float tPercent);
 
-	public abstract T Result();
+	public virtual T Result()
+	{
+		return Lerp(Start, Target, EasedElapsedPercentage);
+	}
+
+	public virtual T ResultAt(float tPercent)
+	{
+		if (tPercent < 0 || tPercent > 1)
+			throw new ArgumentException(nameof(tPercent) + " needs to be between 0 and 1", nameof(tPercent));
+		return Lerp(Start, Target, Easing(tPercent));
+	}
 
 
 
 	public void Restart()
 	{
-		_startTime = Time;
+		StartTime = Time;
 	}
 
 	public void RestartAt(float tPercent)
@@ -63,7 +72,7 @@ public abstract class TweenBase<T>
 		if (tPercent < 0 || tPercent > 1)
 			throw new ArgumentException(nameof(tPercent) + " needs to be between 0 and 1", nameof(tPercent));
 		float diff = Duration * tPercent;
-		_startTime = Time - diff;
+		StartTime = Time - diff;
 	}
 
 

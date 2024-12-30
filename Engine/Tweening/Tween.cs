@@ -16,9 +16,9 @@ public class Tween : TweenBase<Vector2>
 	{
 	}
 
-	public override Vector2 Result()
+	protected override Vector2 Lerp(Vector2 start, Vector2 target, float tPercent)
 	{
-		return Vector2.Lerp(Start, Target, Easing(ElapsedPercentage));
+		return Vector2.Lerp(start, target, tPercent);
 	}
 }
 
@@ -36,8 +36,28 @@ public class FloatTween : TweenBase<float>
 	{
 	}
 
-	public override float Result()
+	protected override float Lerp(float start, float target, float tPercent)
 	{
-		return MathHelper.Lerp(Start, Target, Easing(ElapsedPercentage));
+		return MathHelper.Lerp(start, target, tPercent);
+	}
+}
+
+public class ColorTween : TweenBase<Color>
+{
+	public ColorTween()
+	{
+	}
+
+	public ColorTween(float duration) : base(duration)
+	{
+	}
+
+	public ColorTween(Color start, Color target, float duration) : base(start, target, duration)
+	{
+	}
+
+	protected override Color Lerp(Color start, Color target, float tPercent)
+	{
+		return Color.Lerp(start, target, tPercent);
 	}
 }
